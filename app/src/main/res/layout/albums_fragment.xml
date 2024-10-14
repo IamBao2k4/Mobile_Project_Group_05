@@ -18,110 +18,15 @@
         android:layout_centerHorizontal="true"
         />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/text_view">
-
-       <GridLayout
-           android:layout_width="match_parent"
+       <GridView
+           android:id="@+id/grid_layout"
+           android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:columnCount="2"
-           android:padding="15dp"
+           android:numColumns="2"
+           android:layout_below="@+id/text_view"
            >
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 1"
-               />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 2" />
+       </GridView>
 
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 3" />
-
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 4" />
-
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 5" />
-
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 6" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 7" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 8" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 9" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 10" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 11" />
-           <ImageButton
-               android:layout_width="0dp"
-               android:layout_height="150dp"
-               android:layout_columnWeight="1"
-               android:layout_margin="4dp"
-               android:background="@drawable/ic_baseline_folder_24"
-               android:text="Item 12" />
-
-       </GridLayout>
-
-    </ScrollView>
 
 
 </RelativeLayout>
