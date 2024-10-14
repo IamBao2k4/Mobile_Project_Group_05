@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_picture"
+        android:title="@string/nav_picture"
+        android:icon="@drawable/icon_pictures_24"
+        >
+    </item>
+
+    <item android:id="@+id/nav_camera"
+        android:title="@string/nav_camera"
+        android:icon="@drawable/ic_outline_photo_camera_24"
+        >
+    </item>
+
+    <item android:id="@+id/nav_video"
+        android:title="@string/nav_video"
+        android:icon="@drawable/ic_baseline_slideshow_24"
+        >
+    </item>
+
+    <item android:id="@+id/nav_settings"
+        android:title="@string/more"
+        android:icon="@drawable/icon_more"
+        >
+    </item>
+
+
+</menu>
