@@ -18,7 +18,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     public HomeFragment selectedFragment = new HomeFragment();
-    BottomNavigationView bottomNavigationView = findViewById(R.id.nav_button);
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +26,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         loadFragment(selectedFragment);
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        binding.navButton.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (R.id.nav_album == itemId) {
                 selectedFragment = new HomeFragment();
-            /*} else if (R.id.nav_camera == itemId) {
-                selectedFragment = new cameraFragment();*/
+//            } else if (R.id.nav_camera == itemId) {
+//                selectedFragment = new cameraFragment();
+//                return false;
             } else if (R.id.nav_settings == itemId) {
-                    showPopupMenu(findViewById(R.id.nav_settings));
+                  showPopupMenu(findViewById(R.id.nav_settings));
                     return false; // Không chuyển Fragment khi nhấn vào "More"
             }
             if (selectedFragment != null)
@@ -55,15 +58,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    /*case R.id.dark_light_mode:
-
-                        break;*/
-                    /*case R.id.action_option2:
-
-                        break;
-                    case R.id.action_option3:
-
-                        break;*/
+//                    case R.id.dark_light_mode:
+//
+//                        break;
+//                    case R.id.action_option2:
+//
+//                        break;
+//                    case R.id.action_option3:
+//
+//                        break;
                 }
                 return true;
             }
