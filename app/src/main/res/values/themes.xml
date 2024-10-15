@@ -1,0 +1,23 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Mobile_Project_G5" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+    <!--    Theme for light mode    -->
+
+    </style>
+
+    <!-- Customize your light theme here. -->
+
+    <style name="buttonStyle">
+        <item name="android:src">@drawable/ic_baseline_folder_24</item>
+        <item name="android:background"> @color/white </item>
+        <item name="android:textColor"> @color/black </item>
+    </style>
+
+    <style name="textStyle">
+        <item name="android:textColor"> @color/black </item>
+    </style>
+
+    <style name="mainBackground">
+        <item name="android:background"> @color/white </item>
+    </style>
+</resources>
