@@ -18,14 +18,13 @@ import android.widget.TextView;
 public class HomeFragment extends Fragment {
 
     private String[] items = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6","Item 7", "Item 8", "Item 9", "Item 10"};
-    private int images = R.drawable.ic_baseline_folder_24;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.albums_fragment, container, false);
 
         GridView gridLayout = currentView.findViewById(R.id.grid_layout);
-        AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), items, images);
+        AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), items);
         gridLayout.setAdapter(adapter);
 
         return currentView;

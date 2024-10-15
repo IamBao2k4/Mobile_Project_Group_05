@@ -11,12 +11,10 @@ import android.widget.TextView;
 public class AlbumItemAdapter extends BaseAdapter {
     private Context context;
     private String[] items;
-    private int images;
 
-    public AlbumItemAdapter(Context context, String[] items, int images) {
+    public AlbumItemAdapter(Context context, String[] items) {
         this.context = context;
         this.items = items;
-        this.images = images;
     }
 
     @Override
@@ -41,10 +39,7 @@ public class AlbumItemAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.item_album_layout, parent, false);
         }
 
-        ImageView imageView = convertView.findViewById(R.id.img_album);
         TextView textView = convertView.findViewById(R.id.text_album);
-
-        imageView.setImageResource(images);
         textView.setText(items[position]);
 
         return convertView;

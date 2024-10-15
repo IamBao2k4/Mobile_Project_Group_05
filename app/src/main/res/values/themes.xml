@@ -8,6 +8,7 @@
     <!-- Customize your light theme here. -->
 
     <style name="buttonStyle">
+        <item name="android:src">@drawable/ic_baseline_folder_24</item>
         <item name="android:background"> @color/white </item>
         <item name="android:textColor"> @color/black </item>
     </style>
