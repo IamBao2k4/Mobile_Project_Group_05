@@ -19,6 +19,7 @@
             android:layout_height="150dp"
             android:scaleType="fitXY"
             android:backgroundTintMode="add"
+            style="@style/buttonStyle"
             >
         </ImageButton>
 
@@ -27,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Album 1"
+            style="@style/textStyle"
             />
 
     </LinearLayout>
