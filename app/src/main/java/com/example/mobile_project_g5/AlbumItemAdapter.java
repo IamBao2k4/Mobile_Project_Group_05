@@ -1,10 +1,12 @@
 package com.example.mobile_project_g5;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,8 +41,15 @@ public class AlbumItemAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.item_album_layout, parent, false);
         }
 
+        ImageButton imgBtn = convertView.findViewById(R.id.img_album);
         TextView textView = convertView.findViewById(R.id.text_album);
         textView.setText(items[position]);
+
+        imgBtn.setOnClickListener(v -> {
+            // Gọi Activity để hiển thị hình ảnh trong album
+            Intent intent = AlbumDetailActivity.newIntent(context, items[position]);
+            context.startActivity(intent);
+        });
 
         return convertView;
     }
