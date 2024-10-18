@@ -21,9 +21,9 @@ public class AlbumDetailActivity extends AppCompatActivity {
         albumNameTextView.setText(albumName);
 
         int[] images = {
-                R.drawable.toys,
-                R.drawable.album_icon,
-                R.drawable.picture,
+                R.drawable.picture1,
+                R.drawable.picture2,
+                R.drawable.picture3,
                 // Thêm các ID drawable khác
         };
 

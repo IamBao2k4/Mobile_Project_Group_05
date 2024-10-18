@@ -13,6 +13,5 @@
         android:layout_weight="1"
         android:padding="10dp"
         android:background="@drawable/image_border"
-        android:scaleType="fitXY" />
-
+        android:scaleType="centerCrop" />
 </LinearLayout>

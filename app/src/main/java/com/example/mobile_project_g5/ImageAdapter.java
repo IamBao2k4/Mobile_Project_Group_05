@@ -1,6 +1,7 @@
 package com.example.mobile_project_g5;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -44,6 +45,15 @@ public class ImageAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
         imageView.setImageResource(images[position]); // Sử dụng setImageResource với ID
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = ImageDetailActivity.newIntent(context, images[position]);
+                intent.putExtra("image_id", images[position]);
+                context.startActivity(intent);
+            }
+        });
 
         return convertView;
     }
