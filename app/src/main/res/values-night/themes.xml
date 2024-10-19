@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Mobile_Project_G5" parent="Theme.Material3.DynamicColors.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+    </style>
+
+    <style name="buttonStyle">
+        <item name="android:src">@drawable/ic_baseline_folder_24_dark_mode</item>
+        <item name="android:background"> #7a7a7a </item>
+        <item name="android:textColor"> @color/white </item>
+    </style>
+
+    <style name="textStyle">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="mainBackground">
+        <item name="android:background"> #7a7a7a </item>
+    </style>
+
+
+</resources>
