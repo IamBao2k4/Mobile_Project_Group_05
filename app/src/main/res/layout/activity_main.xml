@@ -52,9 +52,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/button_menu"
+        android:layout_marginBottom="0dp"
         android:background="@color/background"
-        >
+        app:menu="@menu/button_menu">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>
