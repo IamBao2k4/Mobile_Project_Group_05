@@ -15,10 +15,12 @@ import android.widget.ImageView;
 public class ImageAdapter extends BaseAdapter {
     private Context context;
     private int[] images;
+    private String[] imageInfos;
 
-    public ImageAdapter(Context context, int[] images) {
+    public ImageAdapter(Context context, int[] images, String[] imageInfos) {
         this.context = context;
         this.images = images;
+        this.imageInfos = imageInfos;
     }
 
     @Override
@@ -50,7 +52,8 @@ public class ImageAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = ImageDetailActivity.newIntent(context, images[position]);
-                intent.putExtra("image_id", images[position]);
+                intent.putExtra("image_id", images[position]);        // Truyền ID ảnh
+                intent.putExtra("image_info", imageInfos[position]);  // Truyền thông tin ảnh
                 context.startActivity(intent);
             }
         });

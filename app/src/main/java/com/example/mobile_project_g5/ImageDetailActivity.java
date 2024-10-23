@@ -1,8 +1,10 @@
 package com.example.mobile_project_g5;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -39,6 +41,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         setContentView(R.layout.image_solo_layout);
 
         int imageId = getIntent().getIntExtra("image_id", -1);
+        String imgInfo = getIntent().getStringExtra("image_info");
 
         ImageView imageView = findViewById(R.id.imgSoloPhoto);
         if (imageId != -1) {
@@ -79,6 +82,10 @@ public class ImageDetailActivity extends AppCompatActivity {
                     setAsWallpaper();
                     return true;
                 }
+                if(item.getItemId() == R.id.information){
+                    showImageInfoDialog();
+                    return true;
+                }
                 return false;
             }
         });
@@ -101,5 +108,32 @@ public class ImageDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "Image not found", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void showImageInfoDialog() {
+        String imgInfo = getIntent().getStringExtra("image_info");
+
+        // Tao AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Thông tin ảnh");
+
+        // Hien thong tin anh
+        if (imgInfo != null && !imgInfo.isEmpty()) {
+            builder.setMessage(imgInfo);
+        } else {
+            builder.setMessage("Không có thông tin chi tiết.");
+        }
+
+        // Nut OK dong dialog
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();  // Đóng dialog khi nhấn "OK"
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
 }
