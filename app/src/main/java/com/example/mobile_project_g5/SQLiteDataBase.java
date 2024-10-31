@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.List;
+import android.content.ContentValues;
 
 public class SQLiteDataBase extends SQLiteOpenHelper {
     private static final String DB_NAME = "albumAppDB.db";
@@ -85,6 +86,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         return SQLiteDatabase.openDatabase(dbFile.getPath(),null, SQLiteDatabase.OPEN_READWRITE);
     }
 
+
     private void copyDatabase(File dbFile) {
         try {
             InputStream openDB = context.getAssets().open(DB_NAME);
@@ -97,5 +99,23 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void addAlbum(AlbumClass album) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("Name", album.getAlbumName());
+        values.put("Information", album.getInformation());
+        long newRowId = db.insert("Album", null, values);
+        db.close();
+        AlbumClass[] albums = getAlbum();
+        db.close();
+    }
+    public void deleteAlbum(String albumID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("Album", "Id = ?", new String[]{albumID});
+        db.close();
+        AlbumClass[] albums = getAlbum();
+        db.close();
     }
 }

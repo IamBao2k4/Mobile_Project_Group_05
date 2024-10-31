@@ -30,7 +30,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment {
     SQLiteDataBase sql;
-
+    AlbumClass[] albums;
 
     private boolean isEdit = false;
     private String newAlbumName;
@@ -39,7 +39,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.albums_fragment, container, false);
         sql = new SQLiteDataBase(this.getContext());
-        AlbumClass[] albums = sql.getAlbum();
+        albums = sql.getAlbum();
 
         GridView gridLayout = currentView.findViewById(R.id.grid_layout);
         AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), albums);
@@ -89,7 +89,22 @@ public class HomeFragment extends Fragment {
 
             saveButton.setOnClickListener(v -> {
                 newAlbumName = albumNameInput.getText().toString();
-                dialog.dismiss();
+                boolean albumExists = false;
+                for (AlbumClass album : albums) {
+                    if (album.getAlbumName().equals(newAlbumName)) {
+                        Toast.makeText(this.getContext(), "Tên album đã tồn tại", Toast.LENGTH_SHORT).show();
+                        albumExists = true;
+                        break;
+                    }
+                }
+                if (!albumExists){
+                    AlbumClass album = new AlbumClass(newAlbumName, "", newAlbumName, new ImageClass[0]);
+                    sql.addAlbum(album);
+                    albums = sql.getAlbum();
+                    adapter.notifyDataSetChanged();
+                    Toast.makeText(this.getContext(), "Thêm album thành công", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
             });
             dialog.show();
         });
