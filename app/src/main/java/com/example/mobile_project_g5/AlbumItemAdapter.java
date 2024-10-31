@@ -7,20 +7,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class AlbumItemAdapter extends BaseAdapter {
+
     private final Context context;
     private final AlbumClass[] items;
+    private boolean isEdit = false;
+
 
     public AlbumItemAdapter(Context context, AlbumClass[] items) {
         this.context = context;
         this.items = items;
     }
-
+    public void setEditMode(boolean isEdit) {
+        this.isEdit = isEdit;
+        notifyDataSetChanged();
+    }
     @Override
     public int getCount() {
         return items.length;
@@ -46,7 +53,18 @@ public class AlbumItemAdapter extends BaseAdapter {
         ImageButton imgBtn = convertView.findViewById(R.id.img_album);
         imgBtn.setContentDescription(items[position].getAlbumID());
         TextView textView = convertView.findViewById(R.id.text_album);
+
         textView.setText(items[position].getAlbumName());
+
+
+     
+        ImageView deleteBtn = convertView.findViewById(R.id.img_hide);
+        if (isEdit) {
+            deleteBtn.setVisibility(View.VISIBLE);
+        }
+        else{
+            deleteBtn.setVisibility(View.GONE);
+        }
 
         imgBtn.setOnClickListener(v -> {
             // Gọi Activity để hiển thị hình ảnh trong album
