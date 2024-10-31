@@ -1,11 +1,13 @@
 package com.example.mobile_project_g5;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -22,21 +24,25 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 
 public class HomeFragment extends Fragment {
+    SQLiteDataBase sql;
 
-    private String[] items = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6","Item 7", "Item 8", "Item 9", "Item 10"};
+
     private boolean isEdit = false;
     private String newAlbumName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.albums_fragment, container, false);
+        sql = new SQLiteDataBase(this.getContext());
+        AlbumClass[] albums = sql.getAlbum();
 
         GridView gridLayout = currentView.findViewById(R.id.grid_layout);
-        AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), items);
+        AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), albums);
         gridLayout.setAdapter(adapter);
         Button editBtn = currentView.findViewById(R.id.edit_btn);
         ImageButton addBtn = currentView.findViewById(R.id.add_btn);
