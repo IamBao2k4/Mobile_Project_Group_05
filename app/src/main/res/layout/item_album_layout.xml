@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -12,24 +12,39 @@
         android:gravity="center"
 
         >
-        
-        <ImageButton
-            android:id="@+id/img_album"
-            android:layout_width="190dp"
-            android:layout_height="150dp"
-            android:scaleType="fitXY"
-            android:backgroundTintMode="add"
-            style="@style/buttonStyle"
-            >
-        </ImageButton>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/img_hide"
+                android:visibility="gone"
+                android:translationZ="@android:dimen/app_icon_size"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:scaleType="centerCrop"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/ic_baseline_hide_24dp"
+                app:tint="@color/red" />
+
+            <ImageButton
+                android:id="@+id/img_album"
+                android:layout_width="190dp"
+                android:layout_height="150dp"
+                android:scaleType="fitXY"
+                android:backgroundTintMode="add"
+                style="@style/buttonStyle"
+                >
+            </ImageButton>
+
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/text_album"
+            style="@style/textStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Album 1"
-            style="@style/textStyle"
-            />
+            android:text="Album 1" />
 
     </LinearLayout>
 
