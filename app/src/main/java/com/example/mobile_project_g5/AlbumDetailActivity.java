@@ -3,7 +3,9 @@ package com.example.mobile_project_g5;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     private static final String EXTRA_ALBUM_NAME = "album_name";
     private static final String EXTRA_ALBUM_ID = "album_id";
     private static ImageClass[] images = new ImageClass[0];
+    public static AlbumClass curAlbum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +30,19 @@ public class AlbumDetailActivity extends AppCompatActivity {
         albumNameTextView.setText(albumName);
 
         GridView gridViewImages = findViewById(R.id.grid_view_images);
-        ImageAdapter imageAdapter = new ImageAdapter(this, images); // Bạn cần tạo ImageAdapter
+        ImageAdapter imageAdapter = new ImageAdapter(this, images,""); // Bạn cần tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
+        Button editBtn = findViewById(R.id.edit_btn);
+        ImageButton addBtn = findViewById(R.id.add_btn);
+
+        //Nhấn nút edit sẽ hiển thị nút xóa trên từng ảnh để chọn và xóa
+        editBtn.setOnClickListener(v -> {});
+
+        // nút thêm và ở activity để chọn ảnh thêm
+        addBtn.setOnClickListener(v -> {
+            Intent intent = AddImageActivity.newIntent(AlbumDetailActivity.this, curAlbum);
+            AlbumDetailActivity.this.startActivity(intent);
+        });
     }
 
 
@@ -37,6 +51,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());
         intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
         images = cur_album.getImages();
+        curAlbum = cur_album;
         return intent;
     }
 }

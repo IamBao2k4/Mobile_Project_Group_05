@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,22 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
 
 public class ImageAdapter extends BaseAdapter {
     private Context context;
     private ImageClass[] images;
+    private String type;
+    private List<ImageClass> images_chosen;
+    private boolean isDelete;
 
-    public ImageAdapter(Context context, ImageClass[] images) {
+    public ImageAdapter(Context context, ImageClass[] images, String type) {
         this.context = context;
         this.images = images;
+        this.type =type;
     }
 
     @Override
@@ -39,6 +47,7 @@ public class ImageAdapter extends BaseAdapter {
         return position;
     }
 
+    public  List<ImageClass> getImages_chosen() { return images_chosen; }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -47,13 +56,25 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
+        ImageView select = convertView.findViewById(R.id.select);
+        if(type == "add"){
+            select.setImageResource(R.drawable.ic_baseline_check_24);
+            select.setVisibility(View.VISIBLE);
+        }
         // Đặt đường dẫn của hình ảnh vào ImageView
         Uri imageUri = Uri.parse(images[position].getFilePath());
         // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
         Glide.with(context)
                 .load(imageUri)
                 .into(imageView);// Sử dụng setImageResource với ID
-
+        images_chosen = new ArrayList<>();
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                select.setColorFilter(Color.BLUE);
+                images_chosen.add(images[position]);
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
