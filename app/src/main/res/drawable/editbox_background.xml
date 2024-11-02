@@ -1,0 +1,10 @@
+<!-- res/drawable/editbox_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="8dp" />
+
+    <stroke
+        android:width="1dp"
+        android:color="#CCCCCC" />
+
+    <solid android:color="#FFFFFF" />
+</shape>

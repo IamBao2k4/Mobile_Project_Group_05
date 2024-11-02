@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,8 +28,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.io.InputStream;
 
 public class ImageDetailActivity extends AppCompatActivity {
     private ImageSoloLayoutBinding binding;
@@ -40,16 +44,22 @@ public class ImageDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_solo_layout);
 
-        int imageId = getIntent().getIntExtra("image_id", -1);
-        String imgInfo = getIntent().getStringExtra("image_info");
+
+        String imagePath = getIntent().getStringExtra("image_path");
 
         ImageView imageView = findViewById(R.id.imgSoloPhoto);
-        if (imageId != -1) {
-            imageView.setImageResource(imageId);
+        if (!imagePath.isEmpty()) {
+            Uri imageUri = Uri.parse(imagePath);
+            // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
+            Glide.with(this)
+                    .load(imageUri)
+                    .into(imageView);// Sử dụng setImageResource với ID
         } else {
-            Toast.makeText(this, "Image not found", Toast.LENGTH_SHORT).show();
+            String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
             // Optionally set a default image
-            imageView.setImageResource(R.drawable.toys);
+            Glide.with(this)
+                    .load(Uri.parse(defaultPath))
+                    .into(imageView);// Sử dụng setImageResource với ID
         }
 
         Button backButton = findViewById(R.id.btnSoloBack);
@@ -65,9 +75,10 @@ public class ImageDetailActivity extends AppCompatActivity {
         });
     }
 
-    public static Intent newIntent(Context context, int imageId) {
+    public static Intent newIntent(Context context, String imagePath, String imgInfo) {
         Intent intent = new Intent(context, ImageDetailActivity.class);
-        intent.putExtra("image_id", imageId);
+        intent.putExtra("image_path", imagePath);
+        intent.putExtra("image_info", imgInfo);
         return intent;
     }
 
@@ -93,18 +104,24 @@ public class ImageDetailActivity extends AppCompatActivity {
     }
 
     private void setAsWallpaper() {
-        int imageId = getIntent().getIntExtra("image_id", -1);
-        if (imageId != -1) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imageId);
-            WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-            try {
+        String imagePath = getIntent().getStringExtra("image_path");
+        if (imagePath != null && !imagePath.isEmpty())
+        {
+            try
+            {
+                Uri imageUri = Uri.parse(imagePath);
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
                 wallpaperManager.setBitmap(bitmap);
                 Toast.makeText(this, "Wallpaper set successfully", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 Toast.makeText(this, "Failed to set wallpaper", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
-        } else {
+        } else
+        {
             Toast.makeText(this, "Image not found", Toast.LENGTH_SHORT).show();
         }
     }
@@ -134,6 +151,5 @@ public class ImageDetailActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 }

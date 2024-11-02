@@ -4,23 +4,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 //import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
 
 public class ImageAdapter extends BaseAdapter {
     private Context context;
-    private int[] images;
-    private String[] imageInfos;
+    private ImageClass[] images;
 
-    public ImageAdapter(Context context, int[] images, String[] imageInfos) {
+    public ImageAdapter(Context context, ImageClass[] images) {
         this.context = context;
         this.images = images;
-        this.imageInfos = imageInfos;
     }
 
     @Override
@@ -46,14 +47,19 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
-        imageView.setImageResource(images[position]); // Sử dụng setImageResource với ID
+        // Đặt đường dẫn của hình ảnh vào ImageView
+        Uri imageUri = Uri.parse(images[position].getFilePath());
+        // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
+        Glide.with(context)
+                .load(imageUri)
+                .into(imageView);// Sử dụng setImageResource với ID
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ImageDetailActivity.newIntent(context, images[position]);
-                intent.putExtra("image_id", images[position]);        // Truyền ID ảnh
-                intent.putExtra("image_info", imageInfos[position]);  // Truyền thông tin ảnh
+                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation());
+                intent.putExtra("image_path", images[position].getFilePath());
+                intent.putExtra("image_info", images[position].getInformation());
                 context.startActivity(intent);
             }
         });
