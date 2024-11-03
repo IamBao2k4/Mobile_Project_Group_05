@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -86,16 +87,48 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     }
 
     private void copyDatabase(File dbFile) {
-        try {
-            InputStream openDB = context.getAssets().open(DB_NAME);
-            OutputStream copyDB = new FileOutputStream(dbFile);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = openDB.read(buffer)) > 0) {
-                copyDB.write(buffer, 0, length);
+        if (!dbFile.exists()) {
+            try {
+                InputStream openDB = context.getAssets().open(DB_NAME);
+                OutputStream copyDB = new FileOutputStream(dbFile);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = openDB.read(buffer)) > 0) {
+                    copyDB.write(buffer, 0, length);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+    }
+
+    public void deleteImage(String filePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete("Image", "file_path = ?", new String[]{filePath});
+        db.close();
+    }
+
+    public ImageClass[] getImagesByAlbumId(String albumId) {
+        List<ImageClass> images = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE Album_Id = ?", new String[]{albumId});
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8));
+                images.add(image);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return images.toArray(new ImageClass[0]);
     }
 }
