@@ -2,6 +2,7 @@ package com.example.mobile_project_g5;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,6 +66,16 @@ public class AlbumItemAdapter extends BaseAdapter {
         else{
             deleteBtn.setVisibility(View.GONE);
         }
+
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SQLiteDataBase db = new SQLiteDataBase(context);
+                String albumId = imgBtn.getContentDescription().toString();
+                db.deleteAlbum(albumId);
+                Toast.makeText(context, "Delete album success", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         imgBtn.setOnClickListener(v -> {
             // Gọi Activity để hiển thị hình ảnh trong album

@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment {
         gridLayout.setAdapter(adapter);
         Button editBtn = currentView.findViewById(R.id.edit_btn);
         ImageButton addBtn = currentView.findViewById(R.id.add_btn);
+
         editBtn.setOnClickListener(v -> {
             isEdit = !isEdit;
             if (isEdit) {
@@ -59,6 +60,7 @@ public class HomeFragment extends Fragment {
                 addBtn.setVisibility(View.GONE);
             }
         });
+
         addBtn.setOnClickListener(view -> {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this.getContext());
 

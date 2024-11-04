@@ -102,6 +102,13 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteAlbum(String Id)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete("Album", "Id = ?", new String[]{Id});
+        db.close();
+    }
+
     public void deleteImage(String filePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         int rowsDeleted = db.delete("Image", "file_path = ?", new String[]{filePath});
