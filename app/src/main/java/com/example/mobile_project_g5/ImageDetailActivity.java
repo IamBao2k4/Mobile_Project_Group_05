@@ -33,11 +33,16 @@ import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class ImageDetailActivity extends AppCompatActivity {
     private ImageSoloLayoutBinding binding;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    private ImageClass[] images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,15 @@ public class ImageDetailActivity extends AppCompatActivity {
         Button backButton = findViewById(R.id.btnSoloBack);
         backButton.setOnClickListener(v -> finish());
 
+        // Gán sự kiện cho nút Delete
+        ImageButton deleteButton = findViewById(R.id.delete_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteImage();
+            }
+        });
+
         // Gán sự kiện cho nút Settings
         ImageButton settingsButton = findViewById(R.id.settings_button);
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +94,19 @@ public class ImageDetailActivity extends AppCompatActivity {
         intent.putExtra("image_path", imagePath);
         intent.putExtra("image_info", imgInfo);
         return intent;
+    }
+
+    private void deleteImage() {
+        String imagePath = getIntent().getStringExtra("image_path");
+
+        // Xóa ảnh khỏi cơ sở dữ liệu
+        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        dbHelper.deleteImage(imagePath);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("deleted_image_path", imagePath);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     private void showPopupMenu(View anchor) {
