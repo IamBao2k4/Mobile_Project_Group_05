@@ -62,8 +62,10 @@ public class ImageAdapter extends BaseAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath());
+                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation());
                 intent.putExtra("image_path", images[position].getFilePath());
+                intent.putExtra("image_info", images[position].getInformation());
+                context.startActivity(intent);
                 ((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
             }
         });
