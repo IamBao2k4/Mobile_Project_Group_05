@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -14,10 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlbumDetailActivity extends AppCompatActivity {
+    static final int REQUEST_CODE_DELETE_IMAGE = 1;
     private static final String EXTRA_ALBUM_NAME = "album_name";
     private static final String EXTRA_ALBUM_ID = "album_id";
     private static ImageClass[] images = new ImageClass[0];
     public static AlbumClass curAlbum;
+
+    private ImageAdapter imageAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,9 @@ public class AlbumDetailActivity extends AppCompatActivity {
         String albumID = getIntent().getStringExtra(EXTRA_ALBUM_ID);
         TextView albumNameTextView = findViewById(R.id.album_name);
         albumNameTextView.setText(albumName);
+
+        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        images = dbHelper.getImagesByAlbumId(albumID);
 
         GridView gridViewImages = findViewById(R.id.grid_view_images);
         ImageAdapter imageAdapter = new ImageAdapter(this, images,""); // Bạn cần tạo ImageAdapter
@@ -53,6 +60,19 @@ public class AlbumDetailActivity extends AppCompatActivity {
         images = cur_album.getImages();
         curAlbum = cur_album;
         return intent;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && data != null) {
+            String deletedImagePath = data.getStringExtra("deleted_image_path");
+
+            if (deletedImagePath != null) {
+                imageAdapter.removeImage(deletedImagePath);
+            }
+        }
     }
 }
 

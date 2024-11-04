@@ -1,5 +1,8 @@
 package com.example.mobile_project_g5;
 
+import static com.example.mobile_project_g5.AlbumDetailActivity.REQUEST_CODE_DELETE_IMAGE;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -78,13 +81,30 @@ public class ImageAdapter extends BaseAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath());
+                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation());
                 intent.putExtra("image_path", images[position].getFilePath());
+                intent.putExtra("image_info", images[position].getInformation());
                 context.startActivity(intent);
+                ((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
             }
         });
 
         return convertView;
+    }
+
+    public void removeImage(String imagePath) {
+        int length = images.length;
+        ImageClass[] newImages = new ImageClass[length - 1];
+        int index = 0;
+
+        for (int i = 0; i < length; i++) {
+            if (!images[i].getFilePath().equals(imagePath)) {
+                newImages[index++] = images[i];
+            }
+        }
+
+        images = newImages;
+        notifyDataSetChanged();
     }
 }
 

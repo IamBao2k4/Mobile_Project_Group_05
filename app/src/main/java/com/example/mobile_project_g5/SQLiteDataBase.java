@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import android.util.Pair;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,16 +97,18 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
 
     private void copyDatabase(File dbFile) {
-        try {
-            InputStream openDB = context.getAssets().open(DB_NAME);
-            OutputStream copyDB = new FileOutputStream(dbFile);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = openDB.read(buffer)) > 0) {
-                copyDB.write(buffer, 0, length);
+        if (!dbFile.exists()) {
+            try {
+                InputStream openDB = context.getAssets().open(DB_NAME);
+                OutputStream copyDB = new FileOutputStream(dbFile);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = openDB.read(buffer)) > 0) {
+                    copyDB.write(buffer, 0, length);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -136,6 +141,16 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.openDatabase();
         List<ImageClass> res = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM Image Where Image.Album_Id == ?", new String[]{albumID});
+    public void deleteImage(String filePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete("Image", "file_path = ?", new String[]{filePath});
+        db.close();
+    }
+
+    public ImageClass[] getImagesByAlbumId(String albumId) {
+        List<ImageClass> images = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE Album_Id = ?", new String[]{albumId});
         if (cursor.moveToFirst()) {
             do {
                 ImageClass image = new ImageClass(
@@ -169,5 +184,11 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
             }
         db.close();
         return true;
+                images.add(image);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return images.toArray(new ImageClass[0]);
     }
 }
