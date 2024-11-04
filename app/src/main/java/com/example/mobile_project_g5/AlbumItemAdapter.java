@@ -1,6 +1,8 @@
 package com.example.mobile_project_g5;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -16,7 +18,7 @@ import android.widget.Toast;
 public class AlbumItemAdapter extends BaseAdapter {
 
     private final Context context;
-    private final AlbumClass[] items;
+    private AlbumClass[] items;
     private boolean isEdit = false;
 
 
@@ -65,6 +67,43 @@ public class AlbumItemAdapter extends BaseAdapter {
         else{
             deleteBtn.setVisibility(View.GONE);
         }
+        deleteBtn.setOnClickListener(v -> {
+            // Tạo AlertDialog xác nhận xóa
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Xóa album");
+            builder.setMessage("Bạn có chắc chắn muốn xóa album này?");
+
+            builder.setPositiveButton("Xác nhận", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Xử lý khi người dùng nhấn Xác nhận
+                    SQLiteDataBase sql = new SQLiteDataBase(context);
+                    try {
+                        if (position >= 0 && position < items.length) {
+                            sql.deleteAlbum(items[position].getAlbumID());
+                            items = sql.getAlbum();
+                            notifyDataSetChanged();
+                            Toast.makeText(context, "Đã xóa thành công", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Không thể xóa album", Toast.LENGTH_SHORT).show();
+                        }
+                    } finally {
+                        sql.close();
+                    }
+                }
+            });
+
+            builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Đóng hộp thoại khi người dùng nhấn Hủy
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
 
         imgBtn.setOnClickListener(v -> {
             // Gọi Activity để hiển thị hình ảnh trong album
