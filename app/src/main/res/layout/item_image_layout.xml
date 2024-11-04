@@ -2,16 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center"
     android:layout_margin="10dp">
-
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="0dp"
-        android:layout_height="176dp"
-        android:layout_weight="1"
-        android:padding="10dp"
-        android:background="@drawable/image_border"
-        android:scaleType="centerCrop" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/select"
+            android:visibility="gone"
+            android:translationZ="@android:dimen/app_icon_size"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:scaleType="centerCrop"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_baseline_hide_24dp"
+            app:tint="@color/red" />
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="176dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:background="@drawable/image_border"
+            android:scaleType="centerCrop" />
+    </RelativeLayout>
 </LinearLayout>
