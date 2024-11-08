@@ -1,10 +1,11 @@
 package com.example.mobile_project_g5;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
@@ -13,11 +14,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.List;
+import android.content.ContentValues;
+import android.util.Log;
+import android.widget.Toast;
 
 public class SQLiteDataBase extends SQLiteOpenHelper {
     private static final String DB_NAME = "albumAppDB.db";
@@ -30,17 +31,24 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Không cần thiết vì chúng ta đang sử dụng cơ sở dữ liệu có sẵn
+        File dbFile = context.getDatabasePath(DB_NAME);
+        File file = new File(dbFile.toString());
+        copyDatabase(dbFile);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Xử lý nâng cấp cơ sở dữ liệu nếu cần
+        String dropAlbumQuery = "DROP TABLE IF EXISTS Album";
+        db.execSQL(dropAlbumQuery);
+        String dropImageQuery = "DROP TABLE IF EXISTS Image";
+        db.execSQL(dropImageQuery);
+        onCreate(db);
     }
 
     public AlbumClass[] getAlbum() {
-        List<AlbumClass> res = new ArrayList<>();
         SQLiteDatabase db = this.openDatabase();
+        List<AlbumClass> res = new ArrayList<>();
         Cursor cursor = db.rawQuery("SELECT * FROM Album", null);
         if (cursor.moveToFirst()) {
             do {
@@ -48,10 +56,11 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 String albumID = cursor.getString(0);
                 String information = cursor.getString(2);
                 List<ImageClass> images = new ArrayList<ImageClass>();
-                Cursor cursor2 = db.rawQuery("SELECT * FROM Image img JOIN Album a ON img.Album_Id = a.Id", null);
+                String[] param = new String[]{albumID};
+                Cursor cursor2 = db.rawQuery("SELECT * FROM Image img JOIN Album a ON img.Album_Id = a.Id WHERE a.Id = ?", param);
                 if (cursor2.moveToFirst()) {
                     do {
-                        if (cursor2.getString(1).equals(albumID)) {
+                       {
                             ImageClass image = new ImageClass(
                                     cursor2.getInt(0),
                                     cursor2.getString(1),
@@ -79,23 +88,102 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     public SQLiteDatabase openDatabase() {
         File dbFile = context.getDatabasePath(DB_NAME);
-        File file = new File(dbFile.toString());
         copyDatabase(dbFile);
-//        Toast.makeText(context, "Open database success", Toast.LENGTH_SHORT).show();
         return SQLiteDatabase.openDatabase(dbFile.getPath(),null, SQLiteDatabase.OPEN_READWRITE);
     }
 
+
     private void copyDatabase(File dbFile) {
-        try {
-            InputStream openDB = context.getAssets().open(DB_NAME);
-            OutputStream copyDB = new FileOutputStream(dbFile);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = openDB.read(buffer)) > 0) {
-                copyDB.write(buffer, 0, length);
+        if (!dbFile.exists()) {
+            try {
+                InputStream openDB = context.getAssets().open(DB_NAME);
+                OutputStream copyDB = new FileOutputStream(dbFile);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = openDB.read(buffer)) > 0) {
+                    copyDB.write(buffer, 0, length);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+    }
+
+    public void addAlbum(String name, String infor) {
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put("Name",name.trim());
+            values.put("Information", infor.trim());
+            db.insert("Album", null, values);
+            Toast.makeText(context, "Thêm album thành công", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(context, "Lỗi khi thêm album: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("DatabaseError", "Exception: ", e);
+        } finally {
+            if (db != null && db.isOpen()) {
+                db.close();
+            }
+        }
+    }
+    public void deleteAlbum(String albumID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("Album", "Id = ?", new String[]{albumID});
+        db.close();
+    }
+
+    public void deleteImage(String filePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("Album_Id", "0");
+        int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
+        if (rowsUpdated == 0) {
+            Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Xóa ảnh thành công", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+    }
+
+
+
+    public ImageClass[] getImagesByAlbumId(String albumId) {
+        List<ImageClass> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE Album_Id = ?", new String[]{albumId});
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8));
+                res.add(image);
+            }while (cursor.moveToNext()) ;
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new ImageClass[0]);
+    }
+
+    public boolean updateImageInAlbum(String albumId, ImageClass[] images) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (ImageClass image : images) {
+            ContentValues values = new ContentValues();
+            values.put("Album_Id", albumId);
+            int rowsAffected = db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
+            if (rowsAffected == 0) {
+                //db.close();
+                return false;
+            }
+            }
+        db.close();
+        return true;
     }
 }

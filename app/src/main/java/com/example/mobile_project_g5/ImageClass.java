@@ -1,6 +1,8 @@
 package com.example.mobile_project_g5;
 
-public class ImageClass {
+import java.io.Serializable;
+
+public class ImageClass implements Serializable {
     private int imageID;
     private String albumID;
     private String filePath;
