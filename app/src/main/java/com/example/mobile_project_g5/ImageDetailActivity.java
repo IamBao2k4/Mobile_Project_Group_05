@@ -76,6 +76,7 @@ public class ImageDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleteImage();
+                finish();
             }
         });
 
@@ -106,7 +107,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putExtra("deleted_image_path", imagePath);
         setResult(RESULT_OK, resultIntent);
-        finish();
     }
 
     private void showPopupMenu(View anchor) {

@@ -23,8 +23,6 @@ public class AddImageActivity  extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_image_layout);
-        String albumName = getIntent().getStringExtra(EXTRA_ALBUM_NAME);
-        String albumID = getIntent().getStringExtra(EXTRA_ALBUM_ID);
         Button submit = findViewById(R.id.submit_btn);
         GridView gridViewImages = findViewById(R.id.grid_view_images);
         ImageAdapter imageAdapter = new ImageAdapter(this, images, "add"); // Bạn cần tạo ImageAdapter
@@ -51,7 +49,7 @@ public class AddImageActivity  extends AppCompatActivity {
         Intent intent = new Intent(context, AddImageActivity.class);
         intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());
         intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
-        images = sql.getImagebyAlbumId("0");
+        images = sql.getImagesByAlbumId("0");
         curAlbum = cur_album;
         return intent;
     }

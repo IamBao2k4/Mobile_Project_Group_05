@@ -31,10 +31,9 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createAlbumQuery = "CREATE TABLE IF NOT EXISTS Album (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Information TEXT)";
-        db.execSQL(createAlbumQuery);
-        String createImageQuery = "CREATE TABLE IF NOT EXISTS Image (Id INTEGER PRIMARY KEY AUTOINCREMENT, file_path TEXT, Information TEXT, is_favorite INTERGER, exif_datetime TEXT, activate TEXT, is_selected INTEGER, delete_at TEXT, FOREIGN KEY (Album_Id) REFERENCES Album(Id))";
-        db.execSQL(createImageQuery);
+        File dbFile = context.getDatabasePath(DB_NAME);
+        File file = new File(dbFile.toString());
+        copyDatabase(dbFile);
     }
 
     @Override
@@ -89,9 +88,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     public SQLiteDatabase openDatabase() {
         File dbFile = context.getDatabasePath(DB_NAME);
-        File file = new File(dbFile.toString());
         copyDatabase(dbFile);
-//        Toast.makeText(context, "Open database success", Toast.LENGTH_SHORT).show();
         return SQLiteDatabase.openDatabase(dbFile.getPath(),null, SQLiteDatabase.OPEN_READWRITE);
     }
 
@@ -134,13 +131,22 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Album", "Id = ?", new String[]{albumID});
         db.close();
-        AlbumClass[] albums = getAlbum();
     }
+
     public void deleteImage(String filePath) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int rowsDeleted = db.delete("Image", "file_path = ?", new String[]{filePath});
+        ContentValues cv = new ContentValues();
+        cv.put("Album_Id", "0");
+        int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
+        if (rowsUpdated == 0) {
+            Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Xóa ảnh thành công", Toast.LENGTH_SHORT).show();
+        }
         db.close();
     }
+
+
 
     public ImageClass[] getImagesByAlbumId(String albumId) {
         List<ImageClass> res = new ArrayList<>();

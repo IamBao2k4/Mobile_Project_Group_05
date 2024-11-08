@@ -60,7 +60,7 @@ public class ImageAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
         ImageView select = convertView.findViewById(R.id.select);
-        if(type == "add"){
+        if(type.equals("add")){
             select.setImageResource(R.drawable.ic_baseline_check_24);
             select.setVisibility(View.VISIBLE);
         }

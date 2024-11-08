@@ -68,6 +68,7 @@ public class AlbumItemAdapter extends BaseAdapter {
         else{
             deleteBtn.setVisibility(View.GONE);
         }
+
         deleteBtn.setOnClickListener(v -> {
             // Tạo AlertDialog xác nhận xóa
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -81,7 +82,7 @@ public class AlbumItemAdapter extends BaseAdapter {
                     SQLiteDataBase sql = new SQLiteDataBase(context);
                     try {
                         if (position >= 0 && position < items.length) {
-                            sql.deleteAlbum(items[position].getAlbumID());
+                            sql.deleteAlbum(imgBtn.getContentDescription().toString());
                             items = sql.getAlbum();
                             notifyDataSetChanged();
                             Toast.makeText(context, "Đã xóa thành công", Toast.LENGTH_SHORT).show();
@@ -106,20 +107,9 @@ public class AlbumItemAdapter extends BaseAdapter {
             dialog.show();
         });
 
-        deleteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SQLiteDataBase db = new SQLiteDataBase(context);
-                String albumId = imgBtn.getContentDescription().toString();
-                db.deleteAlbum(albumId);
-                Toast.makeText(context, "Delete album success", Toast.LENGTH_SHORT).show();
-            }
-        });
-
         imgBtn.setOnClickListener(v -> {
             // Gọi Activity để hiển thị hình ảnh trong album
             Intent intent = AlbumDetailActivity.newIntent(context, items[position]);
-            //Toast.makeText(context, imgBtn.getContentDescription(), Toast.LENGTH_SHORT).show();
             context.startActivity(intent);
         });
 
