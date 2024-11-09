@@ -41,6 +41,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
+        Button backBtn = findViewById(R.id.back_btn);
 
         //Nhấn nút edit sẽ hiển thị nút xóa trên từng ảnh để chọn và xóa
         editBtn.setOnClickListener(v -> {});
@@ -49,6 +50,10 @@ public class AlbumDetailActivity extends AppCompatActivity {
         addBtn.setOnClickListener(v -> {
             Intent intent = AddImageActivity.newIntent(AlbumDetailActivity.this, curAlbum);
             AlbumDetailActivity.this.startActivity(intent);
+        });
+
+        backBtn.setOnClickListener(v -> {
+            finish();
         });
     }
 

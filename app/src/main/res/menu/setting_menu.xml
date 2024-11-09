@@ -3,8 +3,8 @@
         android:id="@+id/dark_light_mode"
         android:title="Dark Light Mode"/>
     <item
-        android:id="@+id/action_option2"
-        android:title="Option 2"/>
+        android:id="@+id/favorite_album"
+        android:title="Favorite Album"/>
     <item
         android:id="@+id/action_option3"
         android:title="Option 3"/>

@@ -20,7 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    public HomeFragment selectedFragment = new HomeFragment();
+    public Fragment selectedFragment = new HomeFragment();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     @Override
@@ -92,9 +92,10 @@ public class MainActivity extends AppCompatActivity {
                         setAndChangeDarkLightMode(isDarkModeOn);
                     }
                 }
-                else if(item.getItemId() == R.id.action_option2)
+                else if(item.getItemId() == R.id.favorite_album)
                 {
-
+                    selectedFragment = new FavoriteFragment();
+                    loadFragment(selectedFragment);
                 }
                 else if(item.getItemId() == R.id.action_option3)
                 {

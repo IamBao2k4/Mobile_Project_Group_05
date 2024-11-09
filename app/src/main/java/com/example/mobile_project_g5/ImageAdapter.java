@@ -16,6 +16,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.FitCenter;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +74,7 @@ public class ImageAdapter extends BaseAdapter {
         // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
         Glide.with(context)
                 .load(imageUri)
+                .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(30)))
                 .into(imageView);// Sử dụng setImageResource với ID
         images_chosen = new ArrayList<>();
         select.setOnClickListener(new View.OnClickListener() {

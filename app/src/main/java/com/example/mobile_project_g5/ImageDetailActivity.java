@@ -29,7 +29,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.InputStream;
@@ -55,16 +58,18 @@ public class ImageDetailActivity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.imgSoloPhoto);
         if (!imagePath.isEmpty()) {
             Uri imageUri = Uri.parse(imagePath);
-            // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
+            // Use Glide to load and display the image with fitCenter transformation
             Glide.with(this)
                     .load(imageUri)
-                    .into(imageView);// Sử dụng setImageResource với ID
+                    .apply(new RequestOptions().fitCenter())
+                    .into(imageView);
         } else {
             String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
             // Optionally set a default image
             Glide.with(this)
                     .load(Uri.parse(defaultPath))
-                    .into(imageView);// Sử dụng setImageResource với ID
+                    .apply(new RequestOptions().fitCenter())
+                    .into(imageView);
         }
 
         Button backButton = findViewById(R.id.btnSoloBack);
