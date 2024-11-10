@@ -4,7 +4,7 @@
         android:title="Dark Light Mode"/>
     <item
         android:id="@+id/action_option2"
-        android:title="Option 2"/>
+        android:title="Duplicate Image"/>
     <item
         android:id="@+id/action_option3"
         android:title="Option 3"/>

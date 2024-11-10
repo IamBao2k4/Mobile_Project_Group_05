@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Mobile_Project_G5"
 include(":app")
- 
+include(":sdk")

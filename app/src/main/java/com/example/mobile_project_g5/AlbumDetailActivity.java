@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AlbumDetailActivity extends AppCompatActivity {
     static final int REQUEST_CODE_DELETE_IMAGE = 1;
@@ -20,6 +21,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     private static final String EXTRA_ALBUM_ID = "album_id";
     private static ImageClass[] images = new ImageClass[0];
     public static AlbumClass curAlbum;
+    public static Map<Integer, List<ImageClass>> groups;
 
     private ImageAdapter imageAdapter;
 
@@ -33,11 +35,11 @@ public class AlbumDetailActivity extends AppCompatActivity {
         TextView albumNameTextView = findViewById(R.id.album_name);
         albumNameTextView.setText(albumName);
 
-        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
-        images = dbHelper.getImagesByAlbumId(albumID);
+//        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+//        images = dbHelper.getImagesByAlbumId(albumID);
 
         GridView gridViewImages = findViewById(R.id.grid_view_images);
-        ImageAdapter imageAdapter = new ImageAdapter(this, images,""); // Bạn cần tạo ImageAdapter
+        ImageAdapter imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
@@ -59,6 +61,15 @@ public class AlbumDetailActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
         images = cur_album.getImages();
         curAlbum = cur_album;
+        return intent;
+    }
+    public static Intent newIntent(Context context, AlbumClass cur_album, Map<Integer, List<ImageClass>> groupsImage) {
+        Intent intent = new Intent(context, AlbumDetailActivity.class);
+        intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());
+        intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
+        images = cur_album.getImages();
+        curAlbum = cur_album;
+        groups = groupsImage;
         return intent;
     }
 
