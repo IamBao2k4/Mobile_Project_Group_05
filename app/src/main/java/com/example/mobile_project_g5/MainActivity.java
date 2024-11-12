@@ -97,9 +97,10 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new FavoriteFragment();
                     loadFragment(selectedFragment);
                 }
-                else if(item.getItemId() == R.id.action_option3)
+                else if(item.getItemId() == R.id.deleted_album)
                 {
-
+                    selectedFragment = new DeleteFragment();
+                    loadFragment(selectedFragment);
                 }
                 return true;
             }

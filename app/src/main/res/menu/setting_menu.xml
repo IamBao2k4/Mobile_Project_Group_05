@@ -6,6 +6,6 @@
         android:id="@+id/favorite_album"
         android:title="Favorite Album"/>
     <item
-        android:id="@+id/action_option3"
-        android:title="Option 3"/>
+        android:id="@+id/deleted_album"
+        android:title="Deleted Album"/>
 </menu>

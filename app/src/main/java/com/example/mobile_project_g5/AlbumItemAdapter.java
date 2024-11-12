@@ -59,7 +59,6 @@ public class AlbumItemAdapter extends BaseAdapter {
 
         textView.setText(items[position].getAlbumName());
 
-
      
         ImageView deleteBtn = convertView.findViewById(R.id.img_hide);
         if (isEdit) {

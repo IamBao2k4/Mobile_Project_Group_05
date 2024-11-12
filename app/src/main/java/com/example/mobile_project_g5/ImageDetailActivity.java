@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -52,8 +53,8 @@ public class ImageDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_solo_layout);
 
-
         String imagePath = getIntent().getStringExtra("image_path");
+        String type = getIntent().getStringExtra("type");
 
         ImageView imageView = findViewById(R.id.imgSoloPhoto);
         if (!imagePath.isEmpty()) {
@@ -72,11 +73,30 @@ public class ImageDetailActivity extends AppCompatActivity {
                     .into(imageView);
         }
 
+        ImageButton deleteButton = findViewById(R.id.delete_button);
+        ImageButton restoreButton = findViewById(R.id.restore_button);
+
+        if(type.equals("deleted")){
+            deleteButton.setVisibility(View.GONE);
+            restoreButton.setVisibility(View.VISIBLE);
+        } else {
+            deleteButton.setVisibility(View.VISIBLE);
+            restoreButton.setVisibility(View.GONE);
+        }
+
+        restoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restoreImage();
+                finish();
+            }
+        });
+
         Button backButton = findViewById(R.id.btnSoloBack);
         backButton.setOnClickListener(v -> finish());
 
         // Gán sự kiện cho nút Delete
-        ImageButton deleteButton = findViewById(R.id.delete_button);
+
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,10 +115,11 @@ public class ImageDetailActivity extends AppCompatActivity {
         });
     }
 
-    public static Intent newIntent(Context context, String imagePath, String imgInfo) {
+    public static Intent newIntent(Context context, String imagePath, String imgInfo, String type) {
         Intent intent = new Intent(context, ImageDetailActivity.class);
         intent.putExtra("image_path", imagePath);
         intent.putExtra("image_info", imgInfo);
+        intent.putExtra("type", type);
         return intent;
     }
 
@@ -111,6 +132,18 @@ public class ImageDetailActivity extends AppCompatActivity {
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("deleted_image_path", imagePath);
+        setResult(RESULT_OK, resultIntent);
+    }
+
+    private void restoreImage() {
+        String imagePath = getIntent().getStringExtra("image_path");
+
+        // Khôi phục ảnh đã xóa
+        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        dbHelper.restoreImage(imagePath);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("restored_image_path", imagePath);
         setResult(RESULT_OK, resultIntent);
     }
 

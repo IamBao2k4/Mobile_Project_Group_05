@@ -3,6 +3,7 @@ package com.example.mobile_project_g5;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.util.Log;
 import android.widget.GridView;
@@ -44,7 +45,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
         Button backBtn = findViewById(R.id.back_btn);
 
         //Nhấn nút edit sẽ hiển thị nút xóa trên từng ảnh để chọn và xóa
-        editBtn.setOnClickListener(v -> {});
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageAdapter.setEditMode();
+            }
+        });
 
         // nút thêm và ở activity để chọn ảnh thêm
         addBtn.setOnClickListener(v -> {
@@ -73,9 +79,13 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK && data != null) {
             String deletedImagePath = data.getStringExtra("deleted_image_path");
+            String restoredImagePath = data.getStringExtra("restored_image_path");
 
             if (deletedImagePath != null) {
                 imageAdapter.removeImage(deletedImagePath);
+            }
+            if (restoredImagePath != null) {
+                imageAdapter.addImage(restoredImagePath);
             }
         }
     }

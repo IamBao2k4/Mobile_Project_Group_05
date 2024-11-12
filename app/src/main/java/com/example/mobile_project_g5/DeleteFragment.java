@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-public class FavoriteFragment extends Fragment {
+public class DeleteFragment extends Fragment {
     SQLiteDataBase sql;
 
     @Nullable
@@ -21,15 +21,14 @@ public class FavoriteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.favorite_fragment, container, false);
+        ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.deleteed_fragment, container, false);
         sql = new SQLiteDataBase(getContext());
-        ImageClass[] images = sql.getFavoriteImages();
-        ImageAdapter adapter = new ImageAdapter(getContext(), images, "favorite");
-        GridView gridLayout = currentView.findViewById(R.id.favorite_grid);
+        ImageClass[] images = sql.getDeletedImage();
+        ImageAdapter adapter = new ImageAdapter(getContext(), images, "deleted");
+        GridView gridLayout = currentView.findViewById(R.id.deleted_grid);
         gridLayout.setAdapter(adapter);
 
         Button backBtn = currentView.findViewById(R.id.back_btn);
-
         backBtn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

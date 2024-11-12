@@ -42,6 +42,11 @@ public class AddImageActivity  extends AppCompatActivity {
             db.close();
             finish();
         });
+
+        Button back = findViewById(R.id.back_btn);
+        back.setOnClickListener(view -> {
+            finish();
+        });
     }
 
     public static Intent newIntent(Context context, AlbumClass cur_album) {
@@ -49,7 +54,7 @@ public class AddImageActivity  extends AppCompatActivity {
         Intent intent = new Intent(context, AddImageActivity.class);
         intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());
         intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
-        images = sql.getImagesByAlbumId("0");
+        images = sql.getAllImages();
         curAlbum = cur_album;
         return intent;
     }
