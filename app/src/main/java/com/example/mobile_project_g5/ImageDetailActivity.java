@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,18 +34,26 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,8 +79,11 @@ public class ImageDetailActivity extends AppCompatActivity {
         ImageButton deleteButton = findViewById(R.id.delete_button);
         ImageButton restoreButton = findViewById(R.id.restore_button);
         ImageButton shareButton = findViewById(R.id.share_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
 
         Button backButton = findViewById(R.id.btnSoloBack);
+        final BitmapDrawable[] bitmapDrawable = new BitmapDrawable[1];
+        final Bitmap[] bitmap = new Bitmap[1];
 
         // Load image from path for solo view
         if (!imagePath.isEmpty()) {
@@ -79,8 +92,25 @@ public class ImageDetailActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imageUri)
                     .apply(new RequestOptions().fitCenter())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            // Handle the error
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            // Image is loaded, now you can get the bitmap
+                            bitmapDrawable[0] = (BitmapDrawable) resource;
+                            bitmap[0] = bitmapDrawable[0].getBitmap();
+                            // Do something with the bitmap
+                            return false;
+                        }
+                    })
                     .into(imageView);
-        } else {
+        }
+        else {
             String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
             // Optionally set a default image
             Glide.with(this)
@@ -114,6 +144,24 @@ public class ImageDetailActivity extends AppCompatActivity {
             restoreButton.setVisibility(View.GONE);
         }
 
+        // Set visibility for edit button based on image activation
+        if(image.getActivate().equals("0"))
+        {
+            editButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+            restoreButton.setVisibility(View.VISIBLE);
+            favoriteButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            restoreButton.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.VISIBLE);
+            shareButton.setVisibility(View.VISIBLE);
+        }
+
         // set event for restore button
         restoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,7 +192,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shareImageHandler(imagePath, sql);
+                shareImageHandler(bitmap[0]);
             }
         });
 
@@ -154,45 +202,35 @@ public class ImageDetailActivity extends AppCompatActivity {
         sql.close();
     }
 
-    private void shareImageHandler(String imagePath, SQLiteDataBase sql) {
-        Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        ViewGroup dialogView = (ViewGroup) getLayoutInflater().inflate(R.layout.share_dialog, null);
-        Icon[] icons = sql.getIcons();
+    private void shareImageHandler(Bitmap bitmap) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/*");
+        Uri bmpUri;
+        String textToShare = "Share image";
+        bmpUri = saveImage(bitmap, getApplicationContext());
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Image");
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
+    }
 
-        LinearLayout layout = dialogView.findViewById(R.id.share_layout);
-        ShareDialogIconAdapter adapter = new ShareDialogIconAdapter(this, icons);
+    private static Uri saveImage(Bitmap bitmap, Context applicationContext) {
+        File imageFolder = new File(applicationContext.getCacheDir(), "images");
+        Uri uri = null;
+        try {
+            imageFolder.mkdirs();
+            File file = new File(imageFolder, "shared_image.png");
 
-        for (int i = 0; i < icons.length; i++) {
-            final int index = i;
-            View view = adapter.getView(i, null, layout);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Icon icon = icons[index];
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("image/*");
-                    shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(imagePath));
-                    shareIntent.setPackage(icon.getName());
-                    startActivity(shareIntent);
-                    dialog.dismiss();
-                }
-            });
-            layout.addView(view);
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.flush();
+            stream.close();
+            uri = FileProvider.getUriForFile(applicationContext, "com.example.mobile_project_g5.fileprovider", file);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        dialog.setContentView(dialogView);
-
-        Window window = dialog.getWindow();
-        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        window.setBackgroundDrawableResource(android.R.color.transparent);
-
-        WindowManager.LayoutParams params = window.getAttributes();
-        params.gravity = layout.getGravity();
-        params.y = layout.getBottom();
-        window.setAttributes(params);
-
-        dialog.show();
+        return uri;
     }
 
     private void toggleFavorite(ImageClass image, ImageButton favoriteButton, SQLiteDataBase sql) {

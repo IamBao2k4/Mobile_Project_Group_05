@@ -138,7 +138,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("activate", "0");
-        cv.put("delete_at", System.currentTimeMillis());
+        cv.put("deleted_at", System.currentTimeMillis());
         int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
@@ -214,7 +214,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public ImageClass[] getFavoriteImages() {
         List<ImageClass> res = new ArrayList<>();
         SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE is_favorite = 1", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE is_favorite = 1 AND activate = 1", null);
         if (cursor.moveToFirst()) {
             do {
                 ImageClass image = new ImageClass(
@@ -263,7 +263,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("activate", "1");
-        cv.put("delete_at", "");
+        cv.put("deleted_at", "");
         int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi khôi phục ảnh", Toast.LENGTH_SHORT).show();
@@ -308,23 +308,5 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         values.put("deleted_at", image.getDeleteAt());
         db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
         db.close();
-    }
-
-    public Icon[] getIcons() {
-        List<Icon> res = new ArrayList<>();
-        SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Icon", null);
-        if (cursor.moveToFirst()) {
-            do {
-                Icon icon = new Icon(
-                        cursor.getString(1),
-                        cursor.getString(2)
-                );
-                res.add(icon);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
-        return res.toArray(new Icon[0]);
     }
 }
