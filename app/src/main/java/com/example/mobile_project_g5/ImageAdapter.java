@@ -66,8 +66,6 @@ public class ImageAdapter extends BaseAdapter {
 
         ImageView imageView = convertView.findViewById(R.id.image_view);
         ImageView select = convertView.findViewById(R.id.select);
-        ImageButton delete = convertView.findViewById(R.id.delete_button);
-        ImageButton restore = convertView.findViewById(R.id.restore_button);
         if(type.equals("add")){
             select.setImageResource(R.drawable.ic_baseline_check_24);
             select.setVisibility(View.VISIBLE);

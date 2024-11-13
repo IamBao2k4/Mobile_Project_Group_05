@@ -138,6 +138,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("activate", "0");
+        cv.put("delete_at", System.currentTimeMillis());
         int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
@@ -262,6 +263,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("activate", "1");
+        cv.put("delete_at", "");
         int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi khôi phục ảnh", Toast.LENGTH_SHORT).show();
@@ -290,5 +292,39 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
             return image;
         }
         return null;
+    }
+
+    public void updateImage(ImageClass image) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("ID", image.getImageID());
+        values.put("Album_Id", image.getAlbumID());
+        values.put("file_path", image.getFilePath());
+        values.put("Information", image.getInformation());
+        values.put("is_favorite", image.getIsFavorite());
+        values.put("exif_datetime", image.getExifDatetime());
+        values.put("activate", image.getActivate());
+        values.put("is_selected", image.getIsSelected());
+        values.put("deleted_at", image.getDeleteAt());
+        db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
+        db.close();
+    }
+
+    public Icon[] getIcons() {
+        List<Icon> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Icon", null);
+        if (cursor.moveToFirst()) {
+            do {
+                Icon icon = new Icon(
+                        cursor.getString(1),
+                        cursor.getString(2)
+                );
+                res.add(icon);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new Icon[0]);
     }
 }
