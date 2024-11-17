@@ -107,4 +107,5 @@ public class ImageClass implements Serializable {
     public void setDeleteAt(String deleteAt) {
         this.deleteAt = deleteAt;
     }
+
 }
