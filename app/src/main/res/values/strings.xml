@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Mobile_Project_G5</string>
+    <string name="app_name">FotoStory</string>
+    <string name="nav_picture"> Album </string>
+    <string name="nav_camera"> Photos </string>
+    <string name="nav_video"> Video </string>
+    <string name="more"> More </string>
+    <string name="nav_edit"> Edit </string>
+    <string name="nav_delete"> Delete </string>
+    <string name="nav_share"> Share </string>
+    <string name="nav_favorite"> Favorite </string>
+    <string name="default_title"> </string>
+
 </resources>
