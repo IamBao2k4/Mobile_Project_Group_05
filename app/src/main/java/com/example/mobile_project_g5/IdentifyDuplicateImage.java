@@ -94,7 +94,6 @@ public class IdentifyDuplicateImage {
         List<ImageClass> images = new ArrayList<>();
         try (SQLiteDataBase db = new SQLiteDataBase(this.context)) {
                 db.openDatabase();
-                images = Arrays.asList(db.getAllImages());
         }
         catch ( Exception e )
         {

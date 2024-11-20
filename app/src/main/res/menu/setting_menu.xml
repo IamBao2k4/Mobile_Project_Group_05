@@ -5,6 +5,8 @@
     <item
         android:id="@+id/favorite_album"
         android:title="Favorite Album"/>
+        android:id="@+id/action_option2"
+        android:title="Duplicate Image"/>
     <item
         android:id="@+id/deleted_album"
         android:title="Deleted Album"/>
