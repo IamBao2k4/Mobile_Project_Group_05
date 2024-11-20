@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,13 +55,33 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ImageDetailActivity extends AppCompatActivity {
+    private ImageSoloLayoutBinding binding;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    private ImageClass[] images;
+    private ImageView imageView;
+    private Bitmap processedImage;
+
+    private static final int SELECT_IMAGE = 1;
+    private static final String API_KEY = "nQoMh52MRLDm6BZFvK6bQsPU";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -292,11 +313,16 @@ public class ImageDetailActivity extends AppCompatActivity {
                     showImageInfoDialog();
                     return true;
                 }
+                if(item.getItemId() == R.id.remove_bg){
+                    removeBackground();
+                    return true;
+                }
                 return false;
             }
         });
         popupMenu.show();
     }
+
 
     private void setAsWallpaper() {
         String imagePath = getIntent().getStringExtra("image_path");
@@ -346,4 +372,46 @@ public class ImageDetailActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    private void removeBackground() {
+        Bitmap bitmap = ((android.graphics.drawable.BitmapDrawable) imageView.getDrawable()).getBitmap();
+        Toast.makeText(this, "Removing background...", Toast.LENGTH_SHORT).show();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        InputStream inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), byteArrayOutputStream.toByteArray());
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image_file", "image.png", requestFile);
+
+        RemoveBgAPI removeBgAPI = APIClient.getClient().create(RemoveBgAPI.class);
+        Call<ResponseBody> call= removeBgAPI.removeBackground(
+                API_KEY,body
+        );
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    try{
+                        byte[] imageBytes = response.body().bytes();
+                        processedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        imageView.setImageBitmap(processedImage);
+                        Toast.makeText(ImageDetailActivity.this, "Background removed!", Toast.LENGTH_SHORT).show();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+                else{
+                    Toast.makeText(ImageDetailActivity.this, "Error: " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(ImageDetailActivity.this, "Fail to remove backgorund", Toast.LENGTH_SHORT).show();
+                Log.e("RemoveBg", "Error: " + t.getMessage());
+            }
+        });
+    }
+
 }

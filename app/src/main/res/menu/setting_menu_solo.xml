@@ -4,4 +4,6 @@
           android:title="Used As Wallpaper" />
     <item android:id="@+id/information"
           android:title="Information" />
+    <item android:id="@+id/remove_bg"
+          android:title="Remove Background"/>
 </menu>
