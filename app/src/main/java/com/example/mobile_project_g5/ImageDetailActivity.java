@@ -91,7 +91,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         String imagePath = getIntent().getStringExtra("image_path");
         String type = getIntent().getStringExtra("type");
 
-        ImageView imageView = findViewById(R.id.imgSoloPhoto);
         SQLiteDataBase sql = new SQLiteDataBase(this);
         ImageClass image = sql.getImageByPath(imagePath);
 
@@ -101,6 +100,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         ImageButton restoreButton = findViewById(R.id.restore_button);
         ImageButton shareButton = findViewById(R.id.share_button);
         ImageButton editButton = findViewById(R.id.edit_button);
+        imageView = findViewById(R.id.imgSoloPhoto);
 
         Button backButton = findViewById(R.id.btnSoloBack);
         final BitmapDrawable[] bitmapDrawable = new BitmapDrawable[1];

@@ -108,7 +108,7 @@ public class AlbumItemAdapter extends BaseAdapter {
 
         imgBtn.setOnClickListener(v -> {
             // Gọi Activity để hiển thị hình ảnh trong album
-            Intent intent = AlbumDetailActivity.newIntent(context, items[position]);
+            Intent intent = AlbumDetailActivity.newIntent(context, items[position], null);
             context.startActivity(intent);
         });
 

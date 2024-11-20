@@ -51,32 +51,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.execSQL(dropImageQuery);
         onCreate(db);
     }
-    public List<ImageClass> getAllImages() {
-        List<ImageClass> res = new ArrayList<>();
-        SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image", null);
-        if (cursor.moveToFirst()) {
-            do {
-                {
-                    ImageClass image = new ImageClass(
-                            cursor.getInt(0),
-                            cursor.getString(1),
-                            cursor.getString(2),
-                            cursor.getString(3),
-                            cursor.getInt(4),
-                            cursor.getString(5),
-                            cursor.getString(6),
-                            cursor.getInt(7),
-                            cursor.getString(8));
-                    res.add(image);
-                }
 
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
-        return res;
-    }
     public AlbumClass[] getAlbum() {
         SQLiteDatabase db = this.openDatabase();
         List<AlbumClass> res = new ArrayList<>();

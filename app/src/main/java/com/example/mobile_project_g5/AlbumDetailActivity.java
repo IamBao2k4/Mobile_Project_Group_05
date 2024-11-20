@@ -65,15 +65,6 @@ public class AlbumDetailActivity extends AppCompatActivity {
         });
     }
 
-
-    public static Intent newIntent(Context context, AlbumClass cur_album) {
-        Intent intent = new Intent(context, AlbumDetailActivity.class);
-        intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());
-        intent.putExtra(EXTRA_ALBUM_ID, cur_album.getAlbumID());
-        images = cur_album.getImages();
-        curAlbum = cur_album;
-        return intent;
-    }
     public static Intent newIntent(Context context, AlbumClass cur_album, Map<Integer, List<ImageClass>> groupsImage) {
         Intent intent = new Intent(context, AlbumDetailActivity.class);
         intent.putExtra(EXTRA_ALBUM_NAME, cur_album.getAlbumName());

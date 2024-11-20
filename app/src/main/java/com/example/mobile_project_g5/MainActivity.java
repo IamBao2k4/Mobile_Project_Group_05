@@ -101,17 +101,20 @@ public class MainActivity extends AppCompatActivity {
                 {
                     selectedFragment = new FavoriteFragment();
                     loadFragment(selectedFragment);
-                    IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
-                    AlbumDetailActivity albumDetailActivity = new AlbumDetailActivity();
-                    Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
-                    AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
-                    Intent intent = albumDetailActivity.newIntent(context, duplicate,groups);
-                    context.startActivity(intent);
                 }
                 else if(item.getItemId() == R.id.deleted_album)
                 {
                     selectedFragment = new DeleteFragment();
                     loadFragment(selectedFragment);
+                }
+                else if(item.getItemId() == R.id.action_option2)
+                {
+                    IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
+                    AlbumDetailActivity albumDetailActivity = new AlbumDetailActivity();
+                    Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
+                    AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
+                    Intent intent = albumDetailActivity.newIntent(context, duplicate, groups);
+                    context.startActivity(intent);
                 }
                 return true;
             }
