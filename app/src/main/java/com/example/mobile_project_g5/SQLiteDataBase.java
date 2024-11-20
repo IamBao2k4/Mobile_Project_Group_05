@@ -56,11 +56,11 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 String albumID = cursor.getString(0);
                 String information = cursor.getString(2);
                 List<ImageClass> images = new ArrayList<ImageClass>();
-                String[] param = new String[]{albumID};
-                Cursor cursor2 = db.rawQuery("SELECT * FROM Image img JOIN Album a ON img.Album_Id = a.Id WHERE a.Id = ?", param);
+                String[] param = new String[]{albumID, "1"};
+                Cursor cursor2 = db.rawQuery("SELECT * FROM Image img JOIN Album a ON img.Album_Id = a.Id WHERE a.Id = ? AND img.activate = ?", param);
                 if (cursor2.moveToFirst()) {
                     do {
-                       {
+                        {
                             ImageClass image = new ImageClass(
                                     cursor2.getInt(0),
                                     cursor2.getString(1),
@@ -79,7 +79,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 cursor2.close();
                 AlbumClass album = new AlbumClass(albumName, albumID, information, images.toArray(new ImageClass[0]));
                 res.add(album);
-            }while (cursor.moveToNext()) ;
+            } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
@@ -89,7 +89,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public SQLiteDatabase openDatabase() {
         File dbFile = context.getDatabasePath(DB_NAME);
         copyDatabase(dbFile);
-        return SQLiteDatabase.openDatabase(dbFile.getPath(),null, SQLiteDatabase.OPEN_READWRITE);
+        return SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
     }
 
 
@@ -114,7 +114,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         try {
             db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
-            values.put("Name",name.trim());
+            values.put("Name", name.trim());
             values.put("Information", infor.trim());
             db.insert("Album", null, values);
             Toast.makeText(context, "Thêm album thành công", Toast.LENGTH_SHORT).show();
@@ -127,6 +127,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
             }
         }
     }
+
     public void deleteAlbum(String albumID) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Album", "Id = ?", new String[]{albumID});
@@ -136,7 +137,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public void deleteImage(String filePath) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put("Album_Id", "0");
+        cv.put("activate", "0");
+        cv.put("deleted_at", System.currentTimeMillis());
         int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
@@ -146,12 +148,10 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.close();
     }
 
-
-
-    public ImageClass[] getImagesByAlbumId(String albumId) {
+    public ImageClass[] getAllImages() {
         List<ImageClass> res = new ArrayList<>();
         SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE Album_Id = ?", new String[]{albumId});
+        Cursor cursor = db.rawQuery("SELECT * FROM Image", null);
         if (cursor.moveToFirst()) {
             do {
                 ImageClass image = new ImageClass(
@@ -165,7 +165,31 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                         cursor.getInt(7),
                         cursor.getString(8));
                 res.add(image);
-            }while (cursor.moveToNext()) ;
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new ImageClass[0]);
+    }
+
+    public ImageClass[] getImagesByAlbumId(String albumId) {
+        List<ImageClass> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE Album_Id = ? AND activate = ?", new String[]{albumId, "1"});
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8));
+                res.add(image);
+            } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
@@ -182,7 +206,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 //db.close();
                 return false;
             }
-            }
+        }
         db.close();
         return true;
     }
@@ -190,7 +214,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public ImageClass[] getFavoriteImages() {
         List<ImageClass> res = new ArrayList<>();
         SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE is_favorite = 1", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE is_favorite = 1 AND activate = 1", null);
         if (cursor.moveToFirst()) {
             do {
                 ImageClass image = new ImageClass(
@@ -204,10 +228,85 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                         cursor.getInt(7),
                         cursor.getString(8));
                 res.add(image);
-            }while (cursor.moveToNext()) ;
+            } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
         return res.toArray(new ImageClass[0]);
+    }
+
+    public ImageClass[] getDeletedImage() {
+        List<ImageClass> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE activate = ?", new String[]{"0"});
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8));
+                res.add(image);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new ImageClass[0]);
+    }
+
+    public void restoreImage(String filePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("activate", "1");
+        cv.put("deleted_at", "");
+        int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{filePath});
+        if (rowsUpdated == 0) {
+            Toast.makeText(context, "Lỗi khi khôi phục ảnh", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Khôi phục ảnh thành công", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+    }
+
+    public ImageClass getImageByPath(String restoredImagePath) {
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE file_path = ?", new String[]{restoredImagePath});
+        if (cursor.moveToFirst()) {
+            ImageClass image = new ImageClass(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getInt(4),
+                    cursor.getString(5),
+                    cursor.getString(6),
+                    cursor.getInt(7),
+                    cursor.getString(8));
+            cursor.close();
+            db.close();
+            return image;
+        }
+        return null;
+    }
+
+    public void updateImage(ImageClass image) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("ID", image.getImageID());
+        values.put("Album_Id", image.getAlbumID());
+        values.put("file_path", image.getFilePath());
+        values.put("Information", image.getInformation());
+        values.put("is_favorite", image.getIsFavorite());
+        values.put("exif_datetime", image.getExifDatetime());
+        values.put("activate", image.getActivate());
+        values.put("is_selected", image.getIsSelected());
+        values.put("deleted_at", image.getDeleteAt());
+        db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
+        db.close();
     }
 }

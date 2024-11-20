@@ -33,6 +33,18 @@
         <activity
             android:name=".AddImageActivity">
         </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.mobile_project_g5.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="android.permission.READ_EXTERNAL_STORAGE"
+            android:writePermission="android.permission.WRITE_EXTERNAL_STORAGE">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
 
 </manifest>

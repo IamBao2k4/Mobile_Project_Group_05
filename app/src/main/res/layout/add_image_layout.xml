@@ -12,6 +12,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
+        android:layout_weight="0"
         >
         <TextView
             android:id="@+id/text_view"
@@ -43,6 +44,18 @@
         android:layout_height="wrap_content"
         android:numColumns="2"
         android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp" />
+        android:horizontalSpacing="10dp"
+        android:layout_weight="1"
+        />
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Back"
+        android:layout_weight="0"
+        android:layout_gravity="end"
+        />
 
 </LinearLayout>

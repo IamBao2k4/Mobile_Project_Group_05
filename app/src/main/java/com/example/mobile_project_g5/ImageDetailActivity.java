@@ -2,6 +2,7 @@ package com.example.mobile_project_g5;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,32 +10,50 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,28 +61,56 @@ import java.util.Iterator;
 import java.util.List;
 
 public class ImageDetailActivity extends AppCompatActivity {
-    private ImageSoloLayoutBinding binding;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-    private ImageClass[] images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_solo_layout);
 
-
         String imagePath = getIntent().getStringExtra("image_path");
+        String type = getIntent().getStringExtra("type");
 
         ImageView imageView = findViewById(R.id.imgSoloPhoto);
+        SQLiteDataBase sql = new SQLiteDataBase(this);
+        ImageClass image = sql.getImageByPath(imagePath);
+
+        ImageButton settingsButton = findViewById(R.id.settings_button);
+        ImageButton favoriteButton = findViewById(R.id.favorite_button);
+        ImageButton deleteButton = findViewById(R.id.delete_button);
+        ImageButton restoreButton = findViewById(R.id.restore_button);
+        ImageButton shareButton = findViewById(R.id.share_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
+
+        Button backButton = findViewById(R.id.btnSoloBack);
+        final BitmapDrawable[] bitmapDrawable = new BitmapDrawable[1];
+        final Bitmap[] bitmap = new Bitmap[1];
+
+        // Load image from path for solo view
         if (!imagePath.isEmpty()) {
             Uri imageUri = Uri.parse(imagePath);
             // Use Glide to load and display the image with fitCenter transformation
             Glide.with(this)
                     .load(imageUri)
                     .apply(new RequestOptions().fitCenter())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            // Handle the error
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            // Image is loaded, now you can get the bitmap
+                            bitmapDrawable[0] = (BitmapDrawable) resource;
+                            bitmap[0] = bitmapDrawable[0].getBitmap();
+                            // Do something with the bitmap
+                            return false;
+                        }
+                    })
                     .into(imageView);
-        } else {
+        }
+        else {
             String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
             // Optionally set a default image
             Glide.with(this)
@@ -72,11 +119,59 @@ public class ImageDetailActivity extends AppCompatActivity {
                     .into(imageView);
         }
 
-        Button backButton = findViewById(R.id.btnSoloBack);
-        backButton.setOnClickListener(v -> finish());
+        // Set image favorite icon
+        if(image.getIsFavorite() == 1){
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+        }
+        else{
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+        }
 
-        // Gán sự kiện cho nút Delete
-        ImageButton deleteButton = findViewById(R.id.delete_button);
+        // set event for favorite button
+        favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFavorite(image, favoriteButton, sql);
+            }
+        });
+
+        // Set visibility for delete and restore button based on type
+        if(type.equals("deleted")){
+            deleteButton.setVisibility(View.GONE);
+            restoreButton.setVisibility(View.VISIBLE);
+        } else {
+            deleteButton.setVisibility(View.VISIBLE);
+            restoreButton.setVisibility(View.GONE);
+        }
+
+        // Set visibility for edit button based on image activation
+        if(image.getActivate().equals("0"))
+        {
+            editButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+            restoreButton.setVisibility(View.VISIBLE);
+            favoriteButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            restoreButton.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.VISIBLE);
+            shareButton.setVisibility(View.VISIBLE);
+        }
+
+        // set event for restore button
+        restoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                restoreImage();
+                finish();
+            }
+        });
+
+        // set event for delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,20 +180,76 @@ public class ImageDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Gán sự kiện cho nút Settings
-        ImageButton settingsButton = findViewById(R.id.settings_button);
+        // set event for share button
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPopupMenu(view);
             }
         });
+
+        // set event for share button
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareImageHandler(bitmap[0]);
+            }
+        });
+
+        // Set event for back button
+        backButton.setOnClickListener(v -> finish());
+
+        sql.close();
     }
 
-    public static Intent newIntent(Context context, String imagePath, String imgInfo) {
+    private void shareImageHandler(Bitmap bitmap) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/*");
+        Uri bmpUri;
+        String textToShare = "Share image";
+        bmpUri = saveImage(bitmap, getApplicationContext());
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, textToShare);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Share Image");
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
+    }
+
+    private static Uri saveImage(Bitmap bitmap, Context applicationContext) {
+        File imageFolder = new File(applicationContext.getCacheDir(), "images");
+        Uri uri = null;
+        try {
+            imageFolder.mkdirs();
+            File file = new File(imageFolder, "shared_image.png");
+
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.flush();
+            stream.close();
+            uri = FileProvider.getUriForFile(applicationContext, "com.example.mobile_project_g5.fileprovider", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return uri;
+    }
+
+    private void toggleFavorite(ImageClass image, ImageButton favoriteButton, SQLiteDataBase sql) {
+        if(image.getIsFavorite() == 1){
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+            image.setIsFavorite(0);
+        }
+        else{
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+            image.setIsFavorite(1);
+        }
+        sql.updateImage(image);
+    }
+
+    public static Intent newIntent(Context context, String imagePath, String imgInfo, String type) {
         Intent intent = new Intent(context, ImageDetailActivity.class);
         intent.putExtra("image_path", imagePath);
         intent.putExtra("image_info", imgInfo);
+        intent.putExtra("type", type);
         return intent;
     }
 
@@ -111,6 +262,18 @@ public class ImageDetailActivity extends AppCompatActivity {
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("deleted_image_path", imagePath);
+        setResult(RESULT_OK, resultIntent);
+    }
+
+    private void restoreImage() {
+        String imagePath = getIntent().getStringExtra("image_path");
+
+        // Khôi phục ảnh đã xóa
+        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        dbHelper.restoreImage(imagePath);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("restored_image_path", imagePath);
         setResult(RESULT_OK, resultIntent);
     }
 
@@ -183,5 +346,4 @@ public class ImageDetailActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 }

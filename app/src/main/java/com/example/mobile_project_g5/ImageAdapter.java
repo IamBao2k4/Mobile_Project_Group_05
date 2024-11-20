@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -32,7 +33,7 @@ public class ImageAdapter extends BaseAdapter {
     private ImageClass[] images;
     private String type;
     private List<ImageClass> images_chosen;
-    private boolean isDelete;
+    private boolean isEdit = false;
 
     public ImageAdapter(Context context, ImageClass[] images, String type) {
         this.context = context;
@@ -69,6 +70,7 @@ public class ImageAdapter extends BaseAdapter {
             select.setImageResource(R.drawable.ic_baseline_check_24);
             select.setVisibility(View.VISIBLE);
         }
+
         // Đặt đường dẫn của hình ảnh vào ImageView
         Uri imageUri = Uri.parse(images[position].getFilePath());
         // Sử dụng thư viện Glide để tải và hiển thị hình ảnh
@@ -77,6 +79,14 @@ public class ImageAdapter extends BaseAdapter {
                 .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(30)))
                 .into(imageView);// Sử dụng setImageResource với ID
         images_chosen = new ArrayList<>();
+
+        if(isEdit){
+            select.setVisibility(View.VISIBLE);
+        }
+        else{
+            select.setVisibility(View.GONE);
+        }
+
         select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,11 +97,11 @@ public class ImageAdapter extends BaseAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation());
+                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation(), type);
                 intent.putExtra("image_path", images[position].getFilePath());
                 intent.putExtra("image_info", images[position].getInformation());
                 context.startActivity(intent);
-                ((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
+                //((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
             }
         });
 
@@ -111,6 +121,32 @@ public class ImageAdapter extends BaseAdapter {
 
         images = newImages;
         notifyDataSetChanged();
+    }
+
+    public void setEditMode(){
+        this.isEdit = true;
+        notifyDataSetChanged();
+    }
+
+    public void addImage(String restoredImagePath) {
+        int length = images.length;
+        ImageClass[] newImages = new ImageClass[length + 1];
+        for (int i = 0; i < length; i++) {
+            newImages[i] = images[i];
+        }
+        SQLiteDataBase dbHelper = new SQLiteDataBase(context);
+        ImageClass image = dbHelper.getImageByPath(restoredImagePath);
+        newImages[length] = new ImageClass(
+                image.getImageID(),
+                image.getAlbumID(),
+                image.getFilePath(),
+                image.getInformation(),
+                image.getIsFavorite(),
+                image.getExifDatetime(),
+                image.getActivate(),
+                image.getIsSelected(),
+                image.getDeleteAt());
+        images = newImages;
     }
 }
 
