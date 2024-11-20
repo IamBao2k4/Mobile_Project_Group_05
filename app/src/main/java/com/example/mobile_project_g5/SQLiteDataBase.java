@@ -14,8 +14,14 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
 import android.content.ContentValues;
 import android.util.Log;
 import android.widget.Toast;
@@ -70,7 +76,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                                     cursor2.getString(5),
                                     cursor2.getString(6),
                                     cursor2.getInt(7),
-                                    cursor2.getString(8));
+                                    cursor2.getString(8)
+                            );
                             images.add(image);
                         }
 
@@ -150,25 +157,38 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     public ImageClass[] getAllImages() {
         List<ImageClass> res = new ArrayList<>();
-        SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image", null);
-        if (cursor.moveToFirst()) {
-            do {
-                ImageClass image = new ImageClass(
-                        cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2),
-                        cursor.getString(3),
-                        cursor.getInt(4),
-                        cursor.getString(5),
-                        cursor.getString(6),
-                        cursor.getInt(7),
-                        cursor.getString(8));
-                res.add(image);
-            } while (cursor.moveToNext());
+        try (SQLiteDatabase db = this.openDatabase();
+             Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE activate = ?", new String[]{"1"})) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    ImageClass image = new ImageClass(
+                            cursor.getInt(0),   // imageID
+                            cursor.getString(1), // albumID
+                            cursor.getString(2), // filePath
+                            cursor.getString(3), // information
+                            cursor.getInt(4),    // isFavorite
+                            cursor.getString(5), // exifDatetime
+                            cursor.getString(6), // activate
+                            cursor.getInt(7),    // isSelected
+                            cursor.getString(8)  // deleteAt
+                    );
+                    res.add(image);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.e("getAllImages", "Error retrieving images", e);
         }
-        cursor.close();
-        db.close();
+
+        // Sắp xếp danh sách theo exifDatetime (so sánh trực tiếp chuỗi)
+        Collections.sort(res, (img1, img2) -> {
+            String date1 = img1.getExifDatetime();
+            String date2 = img2.getExifDatetime();
+
+            if (date1 == null || date2 == null) return 0; // Xử lý trường hợp null
+            return date1.compareTo(date2); // So sánh chuỗi
+        });
+
         return res.toArray(new ImageClass[0]);
     }
 

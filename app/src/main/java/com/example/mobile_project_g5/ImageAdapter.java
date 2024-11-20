@@ -38,7 +38,7 @@ public class ImageAdapter extends BaseAdapter {
     public ImageAdapter(Context context, ImageClass[] images, String type) {
         this.context = context;
         this.images = images;
-        this.type =type;
+        this.type = type;
     }
 
     @Override

@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
             if (R.id.nav_album == itemId) {
                 selectedFragment = new HomeFragment();
             } else if (R.id.nav_camera == itemId) {
-                // selectedFragment = new cameraFragment();
-                return false;
+                 selectedFragment = new PhotosFragment();
             } else if (R.id.nav_settings == itemId) {
                 showPopupMenu(findViewById(R.id.nav_settings));
                 return false; // Don't load fragment
