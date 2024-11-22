@@ -3,14 +3,19 @@ package com.example.mobile_project_g5;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.WallpaperManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +40,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -107,10 +115,11 @@ public class ImageDetailActivity extends AppCompatActivity {
         });
     }
 
-    public static Intent newIntent(Context context, String imagePath, String imgInfo) {
+    public static Intent newIntent(Context context, String imagePath, String imgInfo, String albumID) {
         Intent intent = new Intent(context, ImageDetailActivity.class);
         intent.putExtra("image_path", imagePath);
         intent.putExtra("image_info", imgInfo);
+        intent.putExtra("album_id", albumID);
         return intent;
     }
 
@@ -225,6 +234,12 @@ public class ImageDetailActivity extends AppCompatActivity {
                         processedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                         imageView.setImageBitmap(processedImage);
                         Toast.makeText(ImageDetailActivity.this, "Background removed!", Toast.LENGTH_SHORT).show();
+
+                        // Lưu ảnh đã xóa nền vào bộ nhớ
+                        saveImageToGallery(processedImage);
+
+
+
                     }catch (IOException e){
                         e.printStackTrace();
                     }
@@ -240,6 +255,56 @@ public class ImageDetailActivity extends AppCompatActivity {
                 Log.e("RemoveBg", "Error: " + t.getMessage());
             }
         });
+    }
+
+    // Hàm lưu ảnh đã xử lý vào bộ nhớ
+    private void saveImageToGallery(Bitmap bitmap) {
+        OutputStream outputStream;
+        String imagePath = "";
+        try{
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DISPLAY_NAME, "bg_removed_" + System.currentTimeMillis() + ".png");
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+                values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Remove BG Images");
+
+                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                outputStream = getContentResolver().openOutputStream(uri);
+                imagePath = uri.toString();
+
+            }
+            else{
+                File storagDir = new File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES), "Remove Bg Images");
+
+                if(!storagDir.exists()){
+                    storagDir.mkdirs();
+                }
+
+                String fileName = "bg_removed_" + + System.currentTimeMillis() + ".png";
+                File imageFile = new File(storagDir, fileName);
+                outputStream = new FileOutputStream(imageFile);
+
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(imageFile);
+                mediaScanIntent.setData(contentUri);
+                sendBroadcast(mediaScanIntent);
+            }
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            String albumID = getIntent().getStringExtra("album_id");
+
+            SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+            dbHelper.addImage(albumID, imagePath, "remove bg");
+
+            Toast.makeText(ImageDetailActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            Toast.makeText(ImageDetailActivity.this, "Fail to save image", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
