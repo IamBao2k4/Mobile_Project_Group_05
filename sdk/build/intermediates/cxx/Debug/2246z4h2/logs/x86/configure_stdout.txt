@@ -12,4 +12,4 @@
 -- Detecting CXX compile features - done
 -- Configuring done
 -- Generating done
--- Build files have been written to: C:/Users/phanm/OneDrive/Desktop/Personal_Project/MyApplication/Mobile_Project_Group_05/sdk/.cxx/Debug/2246z4h2/x86
+-- Build files have been written to: C:/Users/phanm/OneDrive/Desktop/University/Third_year/First_semester/MobileDevelop/project/Mobile_Project_Group_05/sdk/.cxx/Debug/2246z4h2/x86
