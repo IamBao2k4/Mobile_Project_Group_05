@@ -63,7 +63,6 @@ public class IdentifyDuplicateImage {
         }
         return hash.toString();
     }
-
     public boolean isDuplicate(String hash1, String hash2) {
         int count = 0;
         for (int i = 0; i < hash1.length(); i++) {
@@ -76,7 +75,6 @@ public class IdentifyDuplicateImage {
         }
         return true;
     }
-
     public Bitmap ImagetoBitmap(String path){
         String resourceName = path.substring(path.lastIndexOf("/") + 1);
 
@@ -95,8 +93,8 @@ public class IdentifyDuplicateImage {
         List<String> hashes = new ArrayList<>();
         List<ImageClass> images = new ArrayList<>();
         try (SQLiteDataBase db = new SQLiteDataBase(this.context)) {
-                db.openDatabase();
-                images = Arrays.asList(db.getAllImages());
+            db.openDatabase();
+            images = Arrays.asList(db.getAllImages());
         }
         catch ( Exception e )
         {

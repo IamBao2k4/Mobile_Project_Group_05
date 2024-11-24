@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
                     Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
                     AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
-                    Intent intent = AlbumDetailActivity.newIntent(context, duplicate, null);
+                    Intent intent = AlbumDetailActivity.newIntent(context, duplicate, groups);
                     context.startActivity(intent);
                 }
                 return true;

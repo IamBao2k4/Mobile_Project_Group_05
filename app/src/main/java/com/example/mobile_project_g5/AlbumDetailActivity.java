@@ -39,10 +39,10 @@ public class AlbumDetailActivity extends AppCompatActivity {
         albumNameTextView.setText(albumName);
 
         //SQLiteDataBase dbHelper = new SQLiteDataBase(this);
-        images = curAlbum.getImages();
+        //images = curAlbum.getImages();
 
         gridViewImages = findViewById(R.id.grid_view_images);
-        imageAdapter = new ImageAdapter(this, images,""); // Bạn cần tạo ImageAdapter
+        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
@@ -102,9 +102,11 @@ public class AlbumDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        curAlbum.setImages( new SQLiteDataBase(this).getImagesByAlbumId(curAlbum.getAlbumID()));
-        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),"");
-        gridViewImages.setAdapter(imageAdapter);
+        if (!curAlbum.getAlbumID().isEmpty()) {
+            curAlbum.setImages(new SQLiteDataBase(this).getImagesByAlbumId(curAlbum.getAlbumID()));
+            imageAdapter = new ImageAdapter(this, curAlbum.getImages(), "");
+            gridViewImages.setAdapter(imageAdapter);
+        }
     }
 }
 
