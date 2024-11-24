@@ -1,5 +1,5 @@
 {
-  "installationFolder": "C:\\Users\\phanm\\OneDrive\\Desktop\\Personal_Project\\MyApplication\\Mobile_Project_Group_05\\sdk\\build\\intermediates\\prefab_package\\debug\\prefab",
+  "installationFolder": "E:\\University\\Semester 5\\Mobile\\Project\\Mobile_Project_Group_05\\sdk\\build\\intermediates\\prefab_package\\debug\\prefab",
   "gradlePath": ":sdk",
   "packageInfo": {
     "packageName": "sdk",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "C:\\Users\\phanm\\OneDrive\\Desktop\\Personal_Project\\MyApplication\\Mobile_Project_Group_05\\sdk\\native\\jni\\include",
+        "moduleHeaders": "E:\\University\\Semester 5\\Mobile\\Project\\Mobile_Project_Group_05\\sdk\\native\\jni\\include",
         "moduleExportLibraries": [],
         "abis": []
       }
