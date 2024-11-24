@@ -180,7 +180,28 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         } catch (Exception e) {
             Log.e("getAllImages", "Error retrieving images", e);
         }
+    public void addImage(String albumId, String filePath, String information) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues values = new ContentValues();
+            values.put("Album_Id", albumId);
+            values.put("File_Path", filePath);
+            values.put("information", information);
 
+            long rowId = db.insert("Image", null, values);
+
+            if (rowId == -1) {
+                Toast.makeText(context, "Lỗi khi thêm ảnh.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Thêm ảnh thành công.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Toast.makeText(context, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("DatabaseError", "Exception: ", e);
+        } finally {
+            db.close();
+        }
+    }
         // Sắp xếp danh sách theo exifDatetime (so sánh trực tiếp chuỗi)
         Collections.sort(res, (img1, img2) -> {
             String date1 = img1.getExifDatetime();
