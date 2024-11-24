@@ -77,7 +77,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                                     cursor2.getString(5),
                                     cursor2.getString(6),
                                     cursor2.getInt(7),
-                                    cursor2.getString(8)
+                                    cursor2.getString(8),
+                                    cursor2.getString(9)
                             );
                             images.add(image);
                         }
@@ -172,7 +173,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                             cursor.getString(5), // exifDatetime
                             cursor.getString(6), // activate
                             cursor.getInt(7),    // isSelected
-                            cursor.getString(8)  // deleteAt
+                            cursor.getString(8),  // deleteAt
+                            cursor.getString(9)
                     );
                     res.add(image);
                 } while (cursor.moveToNext());
@@ -230,7 +232,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                         cursor.getString(5),
                         cursor.getString(6),
                         cursor.getInt(7),
-                        cursor.getString(8));
+                        cursor.getString(8),
+                        cursor.getString(9));
                 res.add(image);
             } while (cursor.moveToNext());
         }
@@ -269,7 +272,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                         cursor.getString(5),
                         cursor.getString(6),
                         cursor.getInt(7),
-                        cursor.getString(8));
+                        cursor.getString(8),
+                        cursor.getString(9));
                 res.add(image);
             } while (cursor.moveToNext());
         }
@@ -293,7 +297,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                         cursor.getString(5),
                         cursor.getString(6),
                         cursor.getInt(7),
-                        cursor.getString(8));
+                        cursor.getString(8),
+                        cursor.getString(9));
                 res.add(image);
             } while (cursor.moveToNext());
         }
@@ -329,7 +334,8 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                     cursor.getString(5),
                     cursor.getString(6),
                     cursor.getInt(7),
-                    cursor.getString(8));
+                    cursor.getString(8),
+                    cursor.getString(9));
             cursor.close();
             db.close();
             return image;
@@ -349,6 +355,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         values.put("activate", image.getActivate());
         values.put("is_selected", image.getIsSelected());
         values.put("deleted_at", image.getDeleteAt());
+        values.put("type", image.getType());
         db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
         db.close();
     }

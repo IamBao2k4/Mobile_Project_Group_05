@@ -12,6 +12,7 @@ public class ImageClass implements Serializable {
     private String activate;
     private int isSelected;
     private String deleteAt;
+    private String type;
 
     public ImageClass(int imageID,
                       String albumID,
@@ -21,7 +22,7 @@ public class ImageClass implements Serializable {
                       String exifDatetime,
                       String activate,
                       int isSelected,
-                      String deleteAt) {
+                      String deleteAt, String type) {
         this.imageID = imageID;
         this.albumID = albumID;
         this.filePath = filePath;
@@ -31,6 +32,7 @@ public class ImageClass implements Serializable {
         this.activate = activate;
         this.isSelected = isSelected;
         this.deleteAt = deleteAt;
+        this.type = type;
     }
 
     // Các getter và setter cho các thuộc tính
@@ -106,6 +108,9 @@ public class ImageClass implements Serializable {
 
     public void setDeleteAt(String deleteAt) {
         this.deleteAt = deleteAt;
+    }
+    public String getType(){
+        return type;
     }
 
 }
