@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,6 +24,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     private static ImageClass[] images = new ImageClass[0];
     public static AlbumClass curAlbum;
     public static Map<Integer, List<ImageClass>> groups;
+    private GridView gridViewImages;
 
     private ImageAdapter imageAdapter;
 
@@ -39,8 +41,8 @@ public class AlbumDetailActivity extends AppCompatActivity {
 //        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
 //        images = dbHelper.getImagesByAlbumId(albumID);
 
-        GridView gridViewImages = findViewById(R.id.grid_view_images);
-        ImageAdapter imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
+        gridViewImages = findViewById(R.id.grid_view_images);
+        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
@@ -51,6 +53,11 @@ public class AlbumDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 imageAdapter.setEditMode();
+                if(imageAdapter.isEdit) {
+                    editBtn.setText("Done");
+                } else {
+                    editBtn.setText("Edit");
+                }
             }
         });
 
@@ -90,6 +97,14 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 imageAdapter.addImage(restoredImagePath);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        curAlbum.setImages( new SQLiteDataBase(this).getImagesByAlbumId(curAlbum.getAlbumID()));
+        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),"");
+        gridViewImages.setAdapter(imageAdapter);
     }
 }
 

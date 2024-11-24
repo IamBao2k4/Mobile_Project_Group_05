@@ -15,17 +15,21 @@ import androidx.fragment.app.FragmentTransaction;
 
 public class FavoriteFragment extends Fragment {
     SQLiteDataBase sql;
+    ImageAdapter adapter;
+    ImageClass[] images;
+    GridView gridLayout;
+    ViewGroup currentView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.favorite_fragment, container, false);
+        currentView = (ViewGroup) inflater.inflate(R.layout.favorite_fragment, container, false);
         sql = new SQLiteDataBase(getContext());
-        ImageClass[] images = sql.getFavoriteImages();
-        ImageAdapter adapter = new ImageAdapter(getContext(), images, "favorite");
-        GridView gridLayout = currentView.findViewById(R.id.favorite_grid);
+        images = sql.getFavoriteImages();
+        adapter = new ImageAdapter(getContext(), images, "favorite");
+        gridLayout = currentView.findViewById(R.id.favorite_grid);
         gridLayout.setAdapter(adapter);
 
         Button backBtn = currentView.findViewById(R.id.back_btn);
@@ -39,5 +43,14 @@ public class FavoriteFragment extends Fragment {
         });
 
         return currentView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        images = sql.getFavoriteImages();
+        adapter = new ImageAdapter(getContext(), images, "deleted");
+        gridLayout = currentView.findViewById(R.id.favorite_grid);
+        gridLayout.setAdapter(adapter);
     }
 }

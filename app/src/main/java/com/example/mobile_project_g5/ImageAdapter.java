@@ -33,7 +33,7 @@ public class ImageAdapter extends BaseAdapter {
     private ImageClass[] images;
     private String type;
     private List<ImageClass> images_chosen;
-    private boolean isEdit = false;
+    public boolean isEdit = false;
 
     public ImageAdapter(Context context, ImageClass[] images, String type) {
         this.context = context;
@@ -69,6 +69,7 @@ public class ImageAdapter extends BaseAdapter {
         if(type.equals("add")){
             select.setImageResource(R.drawable.ic_baseline_check_24);
             select.setVisibility(View.VISIBLE);
+            this.isEdit = true;
         }
 
         // Đặt đường dẫn của hình ảnh vào ImageView
@@ -124,7 +125,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public void setEditMode(){
-        this.isEdit = true;
+        this.isEdit = !this.isEdit;
         notifyDataSetChanged();
     }
 

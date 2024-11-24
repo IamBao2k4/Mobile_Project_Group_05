@@ -330,4 +330,5 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
         db.close();
     }
+
 }
