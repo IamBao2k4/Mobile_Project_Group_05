@@ -110,15 +110,15 @@ public class MainActivity extends AppCompatActivity {
                 else if(item.getItemId() == R.id.action_option2)
                 {
                     IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
-                    AlbumDetailActivity albumDetailActivity = new AlbumDetailActivity();
                     Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
                     AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
-                    Intent intent = albumDetailActivity.newIntent(context, duplicate, groups);
+                    Intent intent = AlbumDetailActivity.newIntent(context, duplicate, null);
                     context.startActivity(intent);
                 }
                 return true;
             }
         });
+
         popupMenu.show();
     }
 

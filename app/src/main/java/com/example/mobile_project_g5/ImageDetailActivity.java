@@ -81,10 +81,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ImageDetailActivity extends AppCompatActivity {
-    private ImageSoloLayoutBinding binding;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
-    private ImageClass[] images;
     private ImageView imageView;
     private Bitmap processedImage;
 
@@ -411,9 +407,6 @@ public class ImageDetailActivity extends AppCompatActivity {
 
                         // Lưu ảnh đã xóa nền vào bộ nhớ
                         saveImageToGallery(processedImage);
-
-
-
                     }catch (IOException e){
                         e.printStackTrace();
                     }

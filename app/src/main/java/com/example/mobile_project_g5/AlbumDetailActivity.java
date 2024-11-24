@@ -38,11 +38,11 @@ public class AlbumDetailActivity extends AppCompatActivity {
         TextView albumNameTextView = findViewById(R.id.album_name);
         albumNameTextView.setText(albumName);
 
-//        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
-//        images = dbHelper.getImagesByAlbumId(albumID);
+        //SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        images = curAlbum.getImages();
 
         gridViewImages = findViewById(R.id.grid_view_images);
-        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
+        imageAdapter = new ImageAdapter(this, images,""); // Bạn cần tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);

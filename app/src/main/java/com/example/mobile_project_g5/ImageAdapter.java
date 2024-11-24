@@ -98,8 +98,7 @@ public class ImageAdapter extends BaseAdapter {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation(), type);
-                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation(), images[position].getAlbumID());
+                Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation(), type, images[position].getAlbumID());
                 intent.putExtra("image_path", images[position].getFilePath());
                 intent.putExtra("image_info", images[position].getInformation());
                 intent.putExtra("album_id", images[position].getAlbumID());

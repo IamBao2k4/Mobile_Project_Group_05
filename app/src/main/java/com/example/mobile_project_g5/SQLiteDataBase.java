@@ -158,9 +158,9 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     public ImageClass[] getAllImages() {
         List<ImageClass> res = new ArrayList<>();
-        try (SQLiteDatabase db = this.openDatabase();
-             Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE activate = ?", new String[]{"1"})) {
-
+        try {
+            SQLiteDatabase db = this.openDatabase();
+            Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE activate = ?", new String[]{"1"});
             if (cursor.moveToFirst()) {
                 do {
                     ImageClass image = new ImageClass(
@@ -180,6 +180,18 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         } catch (Exception e) {
             Log.e("getAllImages", "Error retrieving images", e);
         }
+        // Sắp xếp danh sách theo exifDatetime (so sánh trực tiếp chuỗi)
+        res.sort((img1, img2) -> {
+            String date1 = img1.getExifDatetime();
+            String date2 = img2.getExifDatetime();
+
+            if (date1 == null || date2 == null) return 0; // Xử lý trường hợp null
+            return date1.compareTo(date2); // So sánh chuỗi
+        });
+
+        return res.toArray(new ImageClass[0]);
+    };
+
     public void addImage(String albumId, String filePath, String information) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -201,17 +213,6 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         } finally {
             db.close();
         }
-    }
-        // Sắp xếp danh sách theo exifDatetime (so sánh trực tiếp chuỗi)
-        Collections.sort(res, (img1, img2) -> {
-            String date1 = img1.getExifDatetime();
-            String date2 = img2.getExifDatetime();
-
-            if (date1 == null || date2 == null) return 0; // Xử lý trường hợp null
-            return date1.compareTo(date2); // So sánh chuỗi
-        });
-
-        return res.toArray(new ImageClass[0]);
     }
 
     public ImageClass[] getImagesByAlbumId(String albumId) {
