@@ -29,8 +29,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 //import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
 
@@ -88,6 +90,7 @@ public class ImageAdapter extends BaseAdapter {
             Uri imageUri = Uri.parse(images[position].getFilePath());
             Glide.with(context)
                     .load(imageUri)
+                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
                     .into(imageView);
         }
         else if (fileType.equals("video")) {
@@ -101,7 +104,10 @@ public class ImageAdapter extends BaseAdapter {
             AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
             retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
-            imageView.setImageBitmap(thumbnail);
+            Glide.with(context)
+                    .load(thumbnail)
+                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc 25px
+                    .into(imageView);
 
             // Lấy thời lượng video
             retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
