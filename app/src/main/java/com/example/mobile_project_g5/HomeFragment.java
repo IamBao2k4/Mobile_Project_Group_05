@@ -73,6 +73,8 @@ public class HomeFragment extends Fragment {
             EditText albumNameInput = dialogView.findViewById(R.id.albumNameInput);
             Button cancelButton = dialogView.findViewById(R.id.cancelButton);
             Button saveButton = dialogView.findViewById(R.id.saveButton);
+            saveButton.setEnabled(false);
+            saveButton.setTextColor(Color.GRAY);
 
             AlertDialog dialog = builder.create();
             dialog.show();
@@ -86,7 +88,7 @@ public class HomeFragment extends Fragment {
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     saveButton.setEnabled(charSequence.length() > 0);
-                    saveButton.setTextColor(charSequence.length() > 0 ? Color.parseColor("#007AFF") : Color.GRAY);
+                    saveButton.setTextColor(charSequence.length() > 0 ? Color.WHITE : Color.GRAY);
                 }
 
                 @Override

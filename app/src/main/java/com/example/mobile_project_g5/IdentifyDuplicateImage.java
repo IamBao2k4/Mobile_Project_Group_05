@@ -95,38 +95,40 @@ public class IdentifyDuplicateImage {
         try (SQLiteDataBase db = new SQLiteDataBase(this.context)) {
             db.openDatabase();
             images = Arrays.asList(db.getAllImages());
-        }
-        catch ( Exception e )
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         for (ImageClass image : images) {
             /* Hash Image */
-            String hash = calculatePHash(ImagetoBitmap(image.getFilePath()));
-            hashes.add(hash);
+            if (image.getType().equals("image")) {
+                String hash = calculatePHash(ImagetoBitmap(image.getFilePath()));
+                hashes.add(hash);
+            }
         }
         for (int i = 0; i < images.size(); i++) {
-            boolean isGrouped = false;
-            String currentHash = hashes.get(i);
+            if (images.get(i).getType().equals("image")) {
+                boolean isGrouped = false;
+                String currentHash = hashes.get(i);
 
-            for (Map.Entry<Integer, List<ImageClass>> entry : groups.entrySet()) {
-                List<ImageClass> group = entry.getValue();
-                String groupHash = calculatePHash(ImagetoBitmap(group.get(0).getFilePath())); // Lấy hash của ảnh đầu tiên trong nhóm
+                for (Map.Entry<Integer, List<ImageClass>> entry : groups.entrySet()) {
+                    List<ImageClass> group = entry.getValue();
+                    String groupHash = calculatePHash(ImagetoBitmap(group.get(0).getFilePath())); // Lấy hash của ảnh đầu tiên trong nhóm
 
-                // So sánh hash với ngưỡng
-                if (isDuplicate(currentHash, groupHash)) { // Ngưỡng Hamming Distance = 5
-                    group.add(images.get(i)); // Thêm ảnh vào nhóm
-                    isGrouped = true;
-                    break;
+                    // So sánh hash với ngưỡng
+                    if (isDuplicate(currentHash, groupHash)) { // Ngưỡng Hamming Distance = 5
+                        group.add(images.get(i)); // Thêm ảnh vào nhóm
+                        isGrouped = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!isGrouped) {
-                int newGroupId = groups.size(); // Sử dụng kích thước hiện tại của map làm ID nhóm mới
-                List<ImageClass> newGroup = new ArrayList<>();
-                newGroup.add(images.get(i));
-                groups.put(newGroupId, newGroup);
+                if (!isGrouped) {
+                    int newGroupId = groups.size(); // Sử dụng kích thước hiện tại của map làm ID nhóm mới
+                    List<ImageClass> newGroup = new ArrayList<>();
+                    newGroup.add(images.get(i));
+                    groups.put(newGroupId, newGroup);
+                }
             }
         }
         return groups;
