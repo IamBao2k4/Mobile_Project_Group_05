@@ -1,5 +1,5 @@
 {
-  "installationFolder": "D:\\HCMUS Slide\\Nam 3\\Phat trien phan mem di dong\\Mobile_Project_Group_05\\sdk\\build\\intermediates\\prefab_package\\debug\\prefab",
+  "installationFolder": "D:\\KHTN\\HKI\\Mobile\\Mobile_Project_Group_05\\sdk\\build\\intermediates\\prefab_package\\debug\\prefab",
   "gradlePath": ":sdk",
   "packageInfo": {
     "packageName": "sdk",
@@ -8,7 +8,7 @@
     "modules": [
       {
         "moduleName": "opencv_jni_shared",
-        "moduleHeaders": "D:\\HCMUS Slide\\Nam 3\\Phat trien phan mem di dong\\Mobile_Project_Group_05\\sdk\\native\\jni\\include",
+        "moduleHeaders": "D:\\KHTN\\HKI\\Mobile\\Mobile_Project_Group_05\\sdk\\native\\jni\\include",
         "moduleExportLibraries": [],
         "abis": []
       }
