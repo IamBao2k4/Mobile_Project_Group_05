@@ -197,6 +197,15 @@ public class ImageDetailActivity extends AppCompatActivity {
             }
         });
 
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openEditImageActivity();
+            }
+        });
+
+
         // set event for delete button
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -472,6 +481,14 @@ public class ImageDetailActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(ImageDetailActivity.this, "Fail to save image", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void openEditImageActivity() {
+        String imagePath = getIntent().getStringExtra("image_path");
+
+        Intent intent = new Intent(this, EditImageActivity.class);
+        intent.putExtra("image_path", imagePath);
+        startActivity(intent);
     }
 
 }

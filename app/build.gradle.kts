@@ -51,4 +51,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
+    implementation("com.burhanrashid52:photoeditor:3.0.2")
 }

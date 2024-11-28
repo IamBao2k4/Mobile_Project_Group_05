@@ -194,11 +194,18 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     public void addImage(String albumId, String filePath, String information) {
         SQLiteDatabase db = this.getWritableDatabase();
+        String exifDatetime = convertMillisToDateTime(System.currentTimeMillis());
         try {
             ContentValues values = new ContentValues();
             values.put("Album_Id", albumId);
-            values.put("File_Path", filePath);
-            values.put("information", information);
+            values.put("file_path", filePath);
+            values.put("Information", information);
+            values.put("is_favorite", 0); // 0 = Không yêu thích, 1 = Yêu thích
+            values.put("exif_datetime", exifDatetime); // Lưu thời gian hiện tại (timestamp)
+            values.put("activate", "1"); // 1 = Kích hoạt, 0 = Không kích hoạt
+            values.put("is_selected", 0); // 0 = Không được chọn, 1 = Được chọn
+            values.put("deleted_at", (String) null); // NULL khi ảnh chưa bị xóa
+            values.put("type", "image"); // Loại mặc định
 
             long rowId = db.insert("Image", null, values);
 
@@ -213,6 +220,12 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         } finally {
             db.close();
         }
+    }
+
+    // Hàm chuyển đổi thời gian
+    private String convertMillisToDateTime(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return sdf.format(new Date(millis));
     }
 
     public ImageClass[] getImagesByAlbumId(String albumId) {
