@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.viewpager2)
     implementation (libs.sqlite)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)

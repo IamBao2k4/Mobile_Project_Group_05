@@ -103,16 +103,19 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
 
     private void copyDatabase(File dbFile) {
-        try {
-            InputStream openDB = context.getAssets().open(DB_NAME);
-            OutputStream copyDB = new FileOutputStream(dbFile);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = openDB.read(buffer)) > 0) {
-                copyDB.write(buffer, 0, length);
+        if(!dbFile.exists())
+        {
+            try {
+                InputStream openDB = context.getAssets().open(DB_NAME);
+                OutputStream copyDB = new FileOutputStream(dbFile);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = openDB.read(buffer)) > 0) {
+                    copyDB.write(buffer, 0, length);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

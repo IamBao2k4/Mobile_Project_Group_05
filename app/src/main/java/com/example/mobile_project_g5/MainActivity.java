@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    Load Fragment
+    //    Load Fragment
     public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-//    Show Popup Menu
+    //    Show Popup Menu
     private void showPopupMenu(View anchor) {
         PopupMenu popupMenu = new PopupMenu(this, anchor);
         popupMenu.getMenuInflater().inflate(R.menu.setting_menu, popupMenu.getMenu());

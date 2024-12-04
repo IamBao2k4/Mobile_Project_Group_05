@@ -40,7 +40,7 @@ public class ImageAdapter extends BaseAdapter {
     private Context context;
     private ImageClass[] images;
     private String type;
-    private List<ImageClass> images_chosen;
+    private List<ImageClass> images_chosen = new ArrayList<>();
     public boolean isEdit = false;
 
     public ImageAdapter(Context context, ImageClass[] images, String type) {

@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -83,6 +84,9 @@ import retrofit2.Response;
 public class ImageDetailActivity extends AppCompatActivity {
     private ImageView imageView;
     private Bitmap processedImage;
+    String imagePath;
+    final BitmapDrawable[] bitmapDrawable = new BitmapDrawable[1];
+    final Bitmap[] bitmap = new Bitmap[1];
 
     private static final int SELECT_IMAGE = 1;
     private static final String API_KEY = "nQoMh52MRLDm6BZFvK6bQsPU";
@@ -93,7 +97,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         setContentView(R.layout.image_solo_layout);
 
 
-        String imagePath = getIntent().getStringExtra("image_path");
+        imagePath = getIntent().getStringExtra("image_path");
         String type = getIntent().getStringExtra("type");
 
         SQLiteDataBase sql = new SQLiteDataBase(this);
@@ -108,42 +112,8 @@ public class ImageDetailActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imgSoloPhoto);
 
         Button backButton = findViewById(R.id.btnSoloBack);
-        final BitmapDrawable[] bitmapDrawable = new BitmapDrawable[1];
-        final Bitmap[] bitmap = new Bitmap[1];
 
-        // Load image from path for solo view
-        if (!imagePath.isEmpty()) {
-            Uri imageUri = Uri.parse(imagePath);
-            // Use Glide to load and display the image with fitCenter transformation
-            Glide.with(this)
-                    .load(imageUri)
-                    .apply(new RequestOptions().fitCenter())
-                    .listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            // Handle the error
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            // Image is loaded, now you can get the bitmap
-                            bitmapDrawable[0] = (BitmapDrawable) resource;
-                            bitmap[0] = bitmapDrawable[0].getBitmap();
-                            // Do something with the bitmap
-                            return false;
-                        }
-                    })
-                    .into(imageView);
-        }
-        else {
-            String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
-            // Optionally set a default image
-            Glide.with(this)
-                    .load(Uri.parse(defaultPath))
-                    .apply(new RequestOptions().fitCenter())
-                    .into(imageView);
-        }
+        GlideImage(imagePath);
 
         // Set image favorite icon
         if(image.getIsFavorite() == 1){
@@ -234,7 +204,90 @@ public class ImageDetailActivity extends AppCompatActivity {
         // Set event for back button
         backButton.setOnClickListener(v -> finish());
 
+        View currentView = findViewById(android.R.id.content);
+        currentView.setOnTouchListener(new OnSwipeTouchListener(ImageDetailActivity.this) {
+            @Override
+            public void onSwipeRight() {
+                imagePath = getPreImage(imagePath);
+                GlideImage(imagePath);
+            }
+
+            @Override
+            public void onSwipeLeft() {
+                imagePath = getNextImage(imagePath);
+                GlideImage(imagePath);
+            }
+        });
+
         sql.close();
+    }
+
+    private void GlideImage(String curImagePath) {
+        // Load image from path for solo view
+        if (!curImagePath.isEmpty()) {
+            Uri imageUri = Uri.parse(curImagePath);
+            // Use Glide to load and display the image with fitCenter transformation
+            Glide.with(this)
+                    .load(imageUri)
+                    .apply(new RequestOptions().fitCenter())
+                    .listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            // Handle the error
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            // Image is loaded, now you can get the bitmap
+                            bitmapDrawable[0] = (BitmapDrawable) resource;
+                            bitmap[0] = bitmapDrawable[0].getBitmap();
+                            // Do something with the bitmap
+                            return false;
+                        }
+                    })
+                    .into(imageView);
+        }
+        else {
+            String defaultPath = "android.resource://com.example.mobile_project_g5/drawable/so5";
+            // Optionally set a default image
+            Glide.with(this)
+                    .load(Uri.parse(defaultPath))
+                    .apply(new RequestOptions().fitCenter())
+                    .into(imageView);
+        }
+    }
+
+    private String getNextImage(String imagePath) {
+        SQLiteDataBase db = new SQLiteDataBase(this);
+        String albumID = getIntent().getStringExtra("album_id");
+        ImageClass[] images = db.getImagesByAlbumId(albumID);
+        int index = 0;
+        for (int i = 0; i < images.length; i++) {
+            if (images[i].getFilePath().equals(imagePath)) {
+                index = i;
+                break;
+            }
+        }
+        String imagePathNext = index == images.length - 1 ? images[images.length - 1].getFilePath() : images[index + 1].getFilePath();
+        db.close();
+        return imagePathNext;
+    }
+
+    private String getPreImage(String imagePath) {
+        SQLiteDataBase db = new SQLiteDataBase(this);
+        String albumID = getIntent().getStringExtra("album_id");
+        ImageClass[] images = db.getImagesByAlbumId(albumID);
+        int index = 0;
+        for (int i = 0; i < images.length; i++) {
+            if (images[i].getFilePath().equals(imagePath)) {
+                index = i;
+                break;
+            }
+        }
+        String imagePathPre = index == 0 ? images[0].getFilePath() : images[index - 1].getFilePath();
+        db.close();
+        return imagePathPre;
     }
 
     private void shareImageHandler(Bitmap bitmap) {
