@@ -16,6 +16,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
+
 public class AlbumItemAdapter extends BaseAdapter {
 
     private final Context context;
@@ -55,6 +60,11 @@ public class AlbumItemAdapter extends BaseAdapter {
 
         ImageButton imgBtn = convertView.findViewById(R.id.img_album);
         imgBtn.setContentDescription(items[position].getAlbumID());
+        Glide
+                .with(context)
+                .load(items[position].getImages()[0].getFilePath())
+                .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
+                .into(imgBtn);
         TextView textView = convertView.findViewById(R.id.text_album);
 
         textView.setText(items[position].getAlbumName());

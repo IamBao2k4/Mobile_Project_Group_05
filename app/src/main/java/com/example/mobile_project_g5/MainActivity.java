@@ -19,13 +19,15 @@ import androidx.fragment.app.Fragment;
 
 import com.example.mobile_project_g5.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    public Fragment selectedFragment = new HomeFragment();
+    public Fragment selectedFragment = new PhotosFragment();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context = this;
@@ -59,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
     public void onNavigationButtonClick(View view) {
         binding.navButton.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (R.id.nav_album == itemId) {
-                selectedFragment = new HomeFragment();
-            } else if (R.id.nav_camera == itemId) {
-                 selectedFragment = new PhotosFragment();
+            if (R.id.nav_photos == itemId) {
+                selectedFragment = new PhotosFragment();
+            } else if (R.id.nav_albums == itemId) {
+                 selectedFragment = new HomeFragment();
             } else if (R.id.nav_settings == itemId) {
                 showPopupMenu(findViewById(R.id.nav_settings));
                 return false; // Don't load fragment
@@ -83,43 +85,40 @@ public class MainActivity extends AppCompatActivity {
 
     //    Show Popup Menu
     private void showPopupMenu(View anchor) {
-        PopupMenu popupMenu = new PopupMenu(this, anchor);
-        popupMenu.getMenuInflater().inflate(R.menu.setting_menu, popupMenu.getMenu());
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_menu_layout, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
 
-        popupMenu.setOnMenuItemClickListener( new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.dark_light_mode)
-                {
-                    if(sharedPreferences.contains("isDarkModeOn"))
-                    {
+        NavigationView navigationView = bottomSheetView.findViewById(R.id.navigation_view);
+        navigationView.inflateMenu(R.menu.setting_menu);
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+                if(item.getItemId() == R.id.dark_light_mode) {
+                    if (sharedPreferences.contains("isDarkModeOn")) {
                         boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
                         setAndChangeDarkLightMode(isDarkModeOn);
                     }
                 }
-                else if(item.getItemId() == R.id.favorite_album)
-                {
-                    selectedFragment = new FavoriteFragment();
-                    loadFragment(selectedFragment);
-                }
-                else if(item.getItemId() == R.id.deleted_album)
-                {
+                else if (item.getItemId() == R.id.favorite_album) {
+                        selectedFragment = new FavoriteFragment();
+                        loadFragment(selectedFragment);
+                    }
+                else if (item.getItemId() == R.id.deleted_album) {
                     selectedFragment = new DeleteFragment();
                     loadFragment(selectedFragment);
                 }
-                else if(item.getItemId() == R.id.action_option2)
-                {
+                else if (item.getItemId() == R.id.action_option2) {
                     IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
                     Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
                     AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
                     Intent intent = AlbumDetailActivity.newIntent(context, duplicate, groups);
                     context.startActivity(intent);
                 }
-                return true;
-            }
+            bottomSheetDialog.dismiss();
+            return true;
         });
 
-        popupMenu.show();
+        bottomSheetDialog.show();
     }
 
     public void setDarkLightMode(boolean isDarkModeOn) {

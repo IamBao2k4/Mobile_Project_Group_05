@@ -1,14 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/dark_light_mode"
-        android:title="Dark Light Mode"/>
+        android:title="Dark Light Mode"
+        android:icon="@drawable/light_off_or_dark_mode_black_sun_21626"
+        />
     <item
         android:id="@+id/favorite_album"
-        android:title="Favorite Album"/>
+        android:title="Favorite Album"
+        android:icon="@drawable/ic_baseline_favorite_24"
+        />
 
     <item android:id="@+id/action_option2"
-        android:title="Duplicate Image"/>
+        android:title="Duplicate Image"
+        android:icon="@drawable/outline_duplicate_24"
+        />
     <item
         android:id="@+id/deleted_album"
-        android:title="Deleted Album"/>
+        android:title="Deleted Album"
+        android:icon="@drawable/ic_baseline_delete_24"
+        />
 </menu>

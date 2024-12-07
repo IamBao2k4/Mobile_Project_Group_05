@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Base application theme. -->
     <style name="Base.Theme.Mobile_Project_G5" parent="Theme.Material3.Light.NoActionBar">
     <!--    Theme for light mode    -->
@@ -8,8 +8,7 @@
     <!-- Customize your light theme here. -->
 
     <style name="buttonStyle">
-        <item name="android:src">@drawable/ic_baseline_folder_24</item>
-        <item name="android:background"> @color/white </item>
+        <item name="android:background"> @drawable/image_border </item>
         <item name="android:textColor"> @color/black </item>
     </style>
 

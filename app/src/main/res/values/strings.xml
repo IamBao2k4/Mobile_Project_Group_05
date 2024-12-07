@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FotoStory</string>
-    <string name="nav_picture"> Album </string>
-    <string name="nav_camera"> Photos </string>
+    <string name="nav_picture"> Photos </string>
+    <string name="nav_album"> Albums </string>
     <string name="nav_video"> Video </string>
     <string name="more"> More </string>
     <string name="nav_edit"> Edit </string>

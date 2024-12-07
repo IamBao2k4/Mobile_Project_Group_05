@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_album"
+    <item android:id="@+id/nav_photos"
         android:title="@string/nav_picture"
         android:icon="@drawable/icon_pictures_24"
         >
     </item>
 
-    <item android:id="@+id/nav_camera"
-        android:title="@string/nav_camera"
-        android:icon="@drawable/ic_outline_photo_camera_24"
+    <item android:id="@+id/nav_albums"
+        android:title="@string/nav_album"
+        android:icon="@drawable/ic_baseline_photo_album_52"
         >
     </item>
 
@@ -22,7 +22,6 @@
         android:title="@string/more"
         android:icon="@drawable/icon_more"
         >
+
     </item>
-
-
 </menu>
