@@ -38,7 +38,6 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         File dbFile = context.getDatabasePath(DB_NAME);
-        File file = new File(dbFile.toString());
         copyDatabase(dbFile);
     }
 
@@ -55,7 +54,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public AlbumClass[] getAlbum() {
         SQLiteDatabase db = this.openDatabase();
         List<AlbumClass> res = new ArrayList<>();
-        String[] except = new String[]{"All","Duplicate"};
+        String[] except = new String[]{"All", "Duplicate"};
         Cursor cursor = db.rawQuery("SELECT * FROM Album WHERE Name != ? and Name != ?", except);
         if (cursor.moveToFirst()) {
             do {
@@ -103,8 +102,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
 
     private void copyDatabase(File dbFile) {
-        if(!dbFile.exists())
-        {
+        if (!dbFile.exists()) {
             try {
                 InputStream openDB = context.getAssets().open(DB_NAME);
                 OutputStream copyDB = new FileOutputStream(dbFile);
@@ -193,7 +191,9 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         });
 
         return res.toArray(new ImageClass[0]);
-    };
+    }
+
+    ;
 
     public void addImage(String albumId, String filePath, String information) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -374,4 +374,49 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.close();
     }
 
+    public String[] getMonthYear() {
+        List<String> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT DISTINCT strftime('%m-%Y', exif_datetime) " +
+                                        "FROM Image " +
+                                        "WHERE activate = 1 " +
+                                        "GROUP BY strftime('%m-%Y', exif_datetime) " +
+                                        "ORDER BY strftime('%m-%Y', exif_datetime);"
+                                        , null);
+        if (cursor.moveToFirst()) {
+            do {
+                res.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new String[0]);
+    }
+
+    public ImageClass[] getImagesByMonthYear(String monthYear) {
+        List<ImageClass> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE strftime('%m-%Y', exif_datetime) = ? AND activate = 1", new String[]{monthYear});
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8),
+                        cursor.getString(9));
+                res.add(image);
+            } while (cursor.moveToNext());
+            cursor.close();
+            db.close();
+            return res.toArray(new ImageClass[0]);
+        }
+        return null;
+    }
 }
+
