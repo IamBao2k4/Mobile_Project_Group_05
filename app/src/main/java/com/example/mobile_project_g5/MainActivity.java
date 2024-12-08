@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context = this;
+    SQLiteDataBase sql;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +101,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 else if (item.getItemId() == R.id.favorite_album) {
-                        selectedFragment = new FavoriteFragment();
-                        loadFragment(selectedFragment);
-                    }
+//                        selectedFragment = new FavoriteFragment();
+//                        loadFragment(selectedFragment);
+                        sql = new SQLiteDataBase(context);
+                        ImageClass[] images = sql.getFavoriteImages();
+                        AlbumClass favoriteAlbum = new AlbumClass("Favorite Album", "-1", null, images);
+                        Intent intent = AlbumDetailActivity.newIntent(context,favoriteAlbum, null);
+                        context.startActivity(intent);
+                }
                 else if (item.getItemId() == R.id.deleted_album) {
-                    selectedFragment = new DeleteFragment();
-                    loadFragment(selectedFragment);
+                    sql = new SQLiteDataBase(context);
+                    ImageClass[] images = sql.getDeletedImage();
+                    AlbumClass deletedAlbum = new AlbumClass("Deleted Album", "-1", null, images);
+                    Intent intent = AlbumDetailActivity.newIntent(context,deletedAlbum, null);
+                    context.startActivity(intent);
+//                    selectedFragment = new DeleteFragment();
+//                    loadFragment(selectedFragment);
                 }
                 else if (item.getItemId() == R.id.action_option2) {
                     IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
