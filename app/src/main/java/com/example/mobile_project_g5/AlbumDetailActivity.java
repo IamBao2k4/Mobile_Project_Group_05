@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AlbumDetailActivity extends AppCompatActivity {
     static final int REQUEST_CODE_DELETE_IMAGE = 1;
@@ -42,12 +43,16 @@ public class AlbumDetailActivity extends AppCompatActivity {
         //images = curAlbum.getImages();
 
         gridViewImages = findViewById(R.id.grid_view_images);
-        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); // Bạn cần tạo ImageAdapter
+        imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); //tạo ImageAdapter
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
         Button backBtn = findViewById(R.id.back_btn);
-
+        // if albumID = -1 => deleted albums view, favorite albums view,...
+        if (albumID.equals("-1")){
+            editBtn.setVisibility(View.GONE);
+            addBtn.setVisibility(View.GONE);
+        }
         //Nhấn nút edit sẽ hiển thị nút xóa trên từng ảnh để chọn và xóa
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +107,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!curAlbum.getAlbumID().isEmpty()) {
+        if (!curAlbum.getAlbumID().isEmpty() && !Objects.equals(curAlbum.getAlbumID(), "-1")) {
             curAlbum.setImages(new SQLiteDataBase(this).getImagesByAlbumId(curAlbum.getAlbumID()));
             imageAdapter = new ImageAdapter(this, curAlbum.getImages(), "");
             gridViewImages.setAdapter(imageAdapter);
