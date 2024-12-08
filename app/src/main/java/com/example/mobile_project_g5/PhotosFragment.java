@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 public class PhotosFragment extends Fragment {
     SQLiteDataBase sql;
-
     String[] dates;
 
     @Override
