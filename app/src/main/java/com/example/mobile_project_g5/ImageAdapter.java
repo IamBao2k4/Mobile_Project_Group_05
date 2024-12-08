@@ -37,10 +37,10 @@ import java.util.Locale;
 //import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
 
 public class ImageAdapter extends BaseAdapter {
-    private Context context;
-    private ImageClass[] images;
-    private String type;
-    private List<ImageClass> images_chosen = new ArrayList<>();
+    protected Context context;
+    protected ImageClass[] images;
+    protected String type;
+    protected List<ImageClass> images_chosen = new ArrayList<>();
     public boolean isEdit = false;
 
     public ImageAdapter(Context context, ImageClass[] images, String type) {
@@ -169,7 +169,7 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     // Hàm định dạng thời lượng video
-    private String formatDuration(long durationMillis) {
+    protected String formatDuration(long durationMillis) {
         long seconds = (durationMillis / 1000) % 60;
         long minutes = (durationMillis / (1000 * 60)) % 60;
         long hours = durationMillis / (1000 * 60 * 60);
