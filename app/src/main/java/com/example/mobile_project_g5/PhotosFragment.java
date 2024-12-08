@@ -18,7 +18,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       // ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.photos_fragment, container, false);
+       //ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.photos_fragment, container, false);
         ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.activity_album_detail, container, false);
         Button editBtn = currentView.findViewById(R.id.edit_btn);
         ImageButton addBtn = currentView.findViewById(R.id.add_btn);

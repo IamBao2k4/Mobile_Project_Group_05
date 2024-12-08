@@ -149,7 +149,7 @@ public class IdentifyDuplicateImage {
                 }
             }
         }
-        AlbumClass album = new AlbumClass("Duplicate","","",images);
+        AlbumClass album = new AlbumClass("Duplicate","-1","",images);
         return album;
     }
 }
