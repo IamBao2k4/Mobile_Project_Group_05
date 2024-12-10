@@ -4,7 +4,9 @@ import static com.example.mobile_project_g5.AlbumDetailActivity.REQUEST_CODE_DEL
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -21,6 +23,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 //import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
 
@@ -64,7 +68,10 @@ public class ImageAdapter extends BaseAdapter {
         return position;
     }
 
-    public  List<ImageClass> getImages_chosen() { return images_chosen; }
+    public List<ImageClass> getImages_chosen() {
+        return images_chosen;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -141,9 +148,50 @@ public class ImageAdapter extends BaseAdapter {
             @Override
             public void onClick(View view) {
                 select.setColorFilter(Color.BLUE);
-                images_chosen.add(images[position]);
+                if(Objects.equals(type, "add")) {
+                    if(images_chosen.contains(images[position])){
+                        images_chosen.remove(images[position]);
+                        return;
+                    }
+                    images_chosen.add(images[position]);
+                    return;
+                }
+                // Tạo AlertDialog xác nhận xóa
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Xóa ảnh");
+                builder.setMessage("Bạn có chắc chắn muốn xóa ảnh này?");
+
+                builder.setPositiveButton("Xác nhận", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Xử lý khi người dùng nhấn Xác nhận
+                        try (SQLiteDataBase sql = new SQLiteDataBase(context)) {
+                            if (position < images.length) {
+                                sql.deleteImage(String.valueOf(images[position].getImageID()));
+                                images = sql.getImagesByAlbumId(images[0].getAlbumID());
+                                notifyDataSetChanged();
+                                Toast.makeText(context, "Đã xóa thành công", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(context, "Không thể xóa ảnh", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                });
+
+                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Đóng hộp thoại khi người dùng nhấn Hủy
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+                select.setColorFilter(Color.RED);
             }
         });
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

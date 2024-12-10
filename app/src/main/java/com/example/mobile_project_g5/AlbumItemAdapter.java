@@ -60,11 +60,16 @@ public class AlbumItemAdapter extends BaseAdapter {
 
         ImageButton imgBtn = convertView.findViewById(R.id.img_album);
         imgBtn.setContentDescription(items[position].getAlbumID());
-        Glide
-                .with(context)
-                .load(items[position].getImages()[0].getFilePath())
-                .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
-                .into(imgBtn);
+        if (items[position].getImages().length > 0) {
+            Glide.with(context)
+                    .load(items[position].getImages()[0].getFilePath())
+                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
+                    .into(imgBtn);
+        }
+        else
+        {
+            imgBtn.setImageResource(R.drawable.ic_baseline_folder_24);
+        }
         TextView textView = convertView.findViewById(R.id.text_album);
 
         textView.setText(items[position].getAlbumName());
@@ -88,9 +93,8 @@ public class AlbumItemAdapter extends BaseAdapter {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     // Xử lý khi người dùng nhấn Xác nhận
-                    SQLiteDataBase sql = new SQLiteDataBase(context);
-                    try {
-                        if (position >= 0 && position < items.length) {
+                    try (SQLiteDataBase sql = new SQLiteDataBase(context)) {
+                        if (position < items.length) {
                             sql.deleteAlbum(imgBtn.getContentDescription().toString());
                             items = sql.getAlbum();
                             notifyDataSetChanged();
@@ -98,8 +102,6 @@ public class AlbumItemAdapter extends BaseAdapter {
                         } else {
                             Toast.makeText(context, "Không thể xóa album", Toast.LENGTH_SHORT).show();
                         }
-                    } finally {
-                        sql.close();
                     }
                 }
             });

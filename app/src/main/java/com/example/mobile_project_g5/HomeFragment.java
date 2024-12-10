@@ -31,13 +31,14 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class HomeFragment extends Fragment {
     SQLiteDataBase sql;
     AlbumClass[] albums;
+    ViewGroup currentView;
 
     private boolean isEdit = false;
     private String newAlbumName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup currentView = (ViewGroup) inflater.inflate(R.layout.albums_fragment, container, false);
+        currentView = (ViewGroup) inflater.inflate(R.layout.albums_fragment, container, false);
         sql = new SQLiteDataBase(this.getContext());
         albums = sql.getAlbum();
 
@@ -54,7 +55,6 @@ public class HomeFragment extends Fragment {
             if (isEdit) {
                 adapter.setEditMode(isEdit);
                 editBtn.setText("Done");
-                // Thực hiện các thao tác chỉnh sửa ở đây
                 addBtn.setVisibility(View.VISIBLE);
             } else {
                 adapter.setEditMode(isEdit);
@@ -102,6 +102,8 @@ public class HomeFragment extends Fragment {
             );
 
             saveButton.setOnClickListener(v -> {
+                // update data before save
+                albums = sql.getAlbum();
                 String newAlbumName = albumNameInput.getText().toString();
                 boolean albumExists = false;
                 for (AlbumClass album : albums) {
@@ -115,7 +117,8 @@ public class HomeFragment extends Fragment {
                     AlbumClass album = new AlbumClass(newAlbumName, "", newAlbumName, new ImageClass[]{});
                     sql.addAlbum(album.getAlbumName(), album.getInformation());
                     albums = sql.getAlbum();
-                    adapter.notifyDataSetChanged();
+                    AlbumItemAdapter new_adapter = new AlbumItemAdapter(this.getContext(), albums);
+                    gridLayout.setAdapter(new_adapter);
                     Toast.makeText(currentView.getContext(), "Thêm album thành công", Toast.LENGTH_SHORT).show();
                 }
                 dialog.dismiss();
@@ -125,5 +128,14 @@ public class HomeFragment extends Fragment {
 
 
         return currentView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        albums = sql.getAlbum();
+        GridView gridLayout = currentView.findViewById(R.id.grid_layout);
+        AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), albums);
+        gridLayout.setAdapter(adapter);
     }
 }

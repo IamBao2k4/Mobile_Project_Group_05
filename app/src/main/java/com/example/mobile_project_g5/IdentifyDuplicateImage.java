@@ -91,7 +91,7 @@ public class IdentifyDuplicateImage {
     public Map<Integer, List<ImageClass>> GroupDuplicateImages() {
         Map<Integer, List<ImageClass>> groups = new HashMap<>();
         List<String> hashes = new ArrayList<>();
-        List<ImageClass> images = new ArrayList<>();
+        List<ImageClass> images;
         try (SQLiteDataBase db = new SQLiteDataBase(this.context)) {
             db.openDatabase();
             images = Arrays.asList(db.getAllImages());
@@ -101,10 +101,9 @@ public class IdentifyDuplicateImage {
         }
         for (ImageClass image : images) {
             /* Hash Image */
-            if (image.getType().equals("image")) {
-                String hash = calculatePHash(ImagetoBitmap(image.getFilePath()));
-                hashes.add(hash);
-            }
+            String hash = calculatePHash(ImagetoBitmap(image.getFilePath()));
+            hashes.add(hash);
+
         }
         for (int i = 0; i < images.size(); i++) {
             if (images.get(i).getType().equals("image")) {
