@@ -32,4 +32,13 @@ public class PhotosFragment extends Fragment {
 
         return currentView;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        dates = sql.getMonthYear();
+        ListView listViewItems = getView().findViewById(R.id.list_layout);
+        ImagesByDateAdapter imageAdapter = new ImagesByDateAdapter(this.getContext(), dates);
+        listViewItems.setAdapter(imageAdapter);
+    }
 }

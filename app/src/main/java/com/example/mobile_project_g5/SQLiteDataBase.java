@@ -142,12 +142,12 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void deleteImage(String id) {
+    public void deleteImage(String path) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put("activate", "0");
         cv.put("deleted_at", System.currentTimeMillis());
-        int rowsUpdated = db.update("Image", cv, "ID = ?", new String[]{id});
+        int rowsUpdated = db.update("Image", cv, "file_path = ?", new String[]{path});
         if (rowsUpdated == 0) {
             Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
         } else {
@@ -396,7 +396,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public ImageClass[] getImagesByMonthYear(String monthYear) {
         List<ImageClass> res = new ArrayList<>();
         SQLiteDatabase db = this.openDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE strftime('%m-%Y', exif_datetime) = ? AND activate = 1", new String[]{monthYear});
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE strftime('%m-%Y', exif_datetime) = ? AND activate = ?", new String[]{monthYear, "1"});
         if (cursor.moveToFirst()) {
             do {
                 ImageClass image = new ImageClass(
