@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class IdentifyDuplicateImage {
     private Context context;
@@ -90,8 +91,10 @@ public class IdentifyDuplicateImage {
     }
     public Map<Integer, List<ImageClass>> GroupDuplicateImages() {
         Map<Integer, List<ImageClass>> groups = new HashMap<>();
-        List<String> hashes = new ArrayList<>();
+        Map<String, List<ImageClass>> hashToGroupMap = new HashMap<>(); // Map từ hash -> nhóm
         List<ImageClass> images;
+
+        // Lấy danh sách ảnh từ database
         try (SQLiteDataBase db = new SQLiteDataBase(this.context)) {
             db.openDatabase();
             images = Arrays.asList(db.getAllImages());
@@ -99,37 +102,33 @@ public class IdentifyDuplicateImage {
             e.printStackTrace();
             return null;
         }
+
         for (ImageClass image : images) {
-            /* Hash Image */
+            if (!image.getType().equals("image")) continue;
+
             String hash = calculatePHash(ImagetoBitmap(image.getFilePath()));
-            hashes.add(hash);
 
-        }
-        for (int i = 0; i < images.size(); i++) {
-            if (images.get(i).getType().equals("image")) {
-                boolean isGrouped = false;
-                String currentHash = hashes.get(i);
-
-                for (Map.Entry<Integer, List<ImageClass>> entry : groups.entrySet()) {
-                    List<ImageClass> group = entry.getValue();
-                    String groupHash = calculatePHash(ImagetoBitmap(group.get(0).getFilePath())); // Lấy hash của ảnh đầu tiên trong nhóm
-
-                    // So sánh hash với ngưỡng
-                    if (isDuplicate(currentHash, groupHash)) { // Ngưỡng Hamming Distance = 5
-                        group.add(images.get(i)); // Thêm ảnh vào nhóm
-                        isGrouped = true;
-                        break;
-                    }
-                }
-
-                if (!isGrouped) {
-                    int newGroupId = groups.size(); // Sử dụng kích thước hiện tại của map làm ID nhóm mới
-                    List<ImageClass> newGroup = new ArrayList<>();
-                    newGroup.add(images.get(i));
-                    groups.put(newGroupId, newGroup);
+            boolean isGrouped = false;
+            for (String groupHash : hashToGroupMap.keySet()) {
+                if (isDuplicate(hash, groupHash)) {
+                    Objects.requireNonNull(hashToGroupMap.get(groupHash)).add(image);
+                    isGrouped = true;
+                    break;
                 }
             }
+
+            if (!isGrouped) {
+                List<ImageClass> newGroup = new ArrayList<>();
+                newGroup.add(image);
+                hashToGroupMap.put(hash, newGroup);
+            }
         }
+
+        int groupId = 0;
+        for (List<ImageClass> group : hashToGroupMap.values()) {
+            groups.put(groupId++, group);
+        }
+
         return groups;
     }
     public AlbumClass toAlbumClass(Map<Integer, List<ImageClass>> groups) {
