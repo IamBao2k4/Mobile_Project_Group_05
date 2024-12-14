@@ -4,14 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.Manifest;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,41 +32,90 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_MANAGE_STORAGE = 1000 ;
     private ActivityMainBinding binding;
     public Fragment selectedFragment = new PhotosFragment();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context = this;
     SQLiteDataBase sql;
+    ReadMediaFromExternalStorage readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        loadFragment(selectedFragment);
-
-        sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-
-        if(sharedPreferences.contains("isDarkModeOn")){
-            boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
-            setDarkLightMode(isDarkModeOn);
+            super.onCreate(savedInstanceState);
+            EdgeToEdge.enable(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+ (API 33)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Nếu chưa được cấp quyền, yêu cầu quyền
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_MEDIA_VIDEO},
+                        REQUEST_CODE_MANAGE_STORAGE);
+            } else {
+                // Nếu đã có quyền, thực hiện hành động
+                Log.d("Storage Permission", "Media permissions granted");
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // Android 10+ (API 29)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Nếu chưa được cấp quyền, yêu cầu quyền
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_CODE_MANAGE_STORAGE);
+            } else {
+                // Nếu đã có quyền
+                Log.d("Storage Permission", "READ_EXTERNAL_STORAGE granted");
+            }
+        } else { // Android 9 và thấp hơn
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Nếu chưa được cấp quyền, yêu cầu quyền
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_CODE_MANAGE_STORAGE);
+            } else {
+                Log.d("Storage Permission", "READ_EXTERNAL_STORAGE granted");
+            }
         }
-        else {
-            editor.putBoolean("isDarkModeOn", false);
-            editor.apply();
+
+        // Đảm bảo việc cập nhật giao diện người dùng luôn chạy trên UI thread
+            readMediaFromExternalStorage.loadMediaData().thenAccept(new Consumer<List<ImageClass>>() {
+                @Override
+                public void accept(List<ImageClass> mediaList) {
+                    // Cập nhật giao diện người dùng trong UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("MainActivity", "Media list size: " + mediaList.size());
+                            setContentView(R.layout.activity_main);
+                            loadFragment(selectedFragment);
+
+                            sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+
+                            if(sharedPreferences.contains("isDarkModeOn")){
+                                boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+                                setDarkLightMode(isDarkModeOn);
+                            }
+                            else {
+                                editor.putBoolean("isDarkModeOn", false);
+                                editor.apply();
+                            }
+
+                            binding = ActivityMainBinding.inflate(getLayoutInflater());
+                            setContentView(binding.getRoot());
+
+                            onNavigationButtonClick(binding.getRoot());
+                        }
+                    });
+                }
+            });
         }
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-
-        onNavigationButtonClick(binding.getRoot());
-    };
-
-//    Navigation button handle
+        //    Navigation button handle
     public void onNavigationButtonClick(View view) {
         binding.navButton.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();

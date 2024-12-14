@@ -14,6 +14,7 @@ public class ImageClass implements Serializable {
     private String deleteAt;
     private String type;
 
+    public ImageClass() {}
     public ImageClass(int imageID,
                       String albumID,
                       String filePath,
@@ -113,4 +114,8 @@ public class ImageClass implements Serializable {
         return type;
     }
 
+    public void setType(String type)
+    {
+        this.type = type;
+    }
 }

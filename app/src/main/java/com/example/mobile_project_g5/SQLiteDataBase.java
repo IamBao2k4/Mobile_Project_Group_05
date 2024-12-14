@@ -26,6 +26,8 @@ import android.content.ContentValues;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 public class SQLiteDataBase extends SQLiteOpenHelper {
     private static final String DB_NAME = "albumAppDB.db";
     private final Context context;
@@ -194,6 +196,36 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     }
 
     ;
+    public void loadImages(List<ImageClass> images) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (ImageClass image : images) {
+            try{
+                ContentValues values = getContentValues(image);
+                long rowId = db.insert("Image", null, values);
+                if (rowId == -1) {
+                    Toast.makeText(context, "Lỗi khi thêm ảnh.", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+            }
+            catch (Exception e){
+                Log.e("DatabaseError", "Exception: ", e);
+            }
+        }
+    }
+
+    private static @NonNull ContentValues getContentValues(ImageClass image) {
+        ContentValues values = new ContentValues();
+        values.put("Album_Id", image.getAlbumID());
+        values.put("file_path", image.getFilePath());
+        values.put("Information", image.getInformation());
+        values.put("is_favorite", 0); // 0 = Không yêu thích, 1 = Yêu thích
+        values.put("exif_datetime", image.getExifDatetime());
+        values.put("activate", "1"); // 1 = Kích hoạt, 0 = Không kích hoạt
+        values.put("is_selected", 0); // 0 = Không được chọn, 1 = Được chọn
+        values.put("deleted_at", (String) null); // NULL khi ảnh chưa bị xóa
+        values.put("type", image.getType());
+        return values;
+    }
 
     public void addImage(String albumId, String filePath, String information) {
         SQLiteDatabase db = this.getWritableDatabase();
