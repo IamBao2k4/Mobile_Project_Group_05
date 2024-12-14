@@ -37,18 +37,16 @@ import java.util.function.Consumer;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_MANAGE_STORAGE = 1000;
     private ActivityMainBinding binding;
-    public Fragment selectedFragment = new PhotosFragment();
+    public Fragment selectedFragment;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     Context context = this;
     SQLiteDataBase sql;
-    ReadMediaFromExternalStorage readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
-
+    ReadMediaFromExternalStorage readMediaFromExternalStorage ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+ (API 33)
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -59,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_CODE_MANAGE_STORAGE);
             } else {
                 // Nếu đã có quyền, thực hiện hành động
+                proceedWithFunctionality();
                 Log.d("Storage Permission", "Media permissions granted");
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // Android 10+ (API 29)
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                         REQUEST_CODE_MANAGE_STORAGE);
             } else {
                 // Nếu đã có quyền
+                proceedWithFunctionality();
                 Log.d("Storage Permission", "READ_EXTERNAL_STORAGE granted");
             }
         } else { // Android 9 và thấp hơn
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         REQUEST_CODE_MANAGE_STORAGE);
             } else {
+                proceedWithFunctionality();
                 Log.d("Storage Permission", "READ_EXTERNAL_STORAGE granted");
             }
         }
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Storage Permission", "Permission granted");
+                Log.d("Storage Permission", "Permission granted and play");
                 proceedWithFunctionality();
             } else {
                 Log.d("Storage Permission", "Permission denied");
@@ -100,7 +101,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void proceedWithFunctionality() {
         // Chức năng bạn muốn thực hiện sau khi có quyền
+        setContentView(R.layout.activity_main);
+        sql = new SQLiteDataBase(context);
+        readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
         List<ImageClass> mediaList = readMediaFromExternalStorage.loadMediaData();
+        selectedFragment = new PhotosFragment();
         Log.d("MainActivity", "Media list size: " + mediaList.size());
         loadFragment(selectedFragment);
 

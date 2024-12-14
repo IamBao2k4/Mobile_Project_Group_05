@@ -66,7 +66,11 @@ public class ReadMediaFromExternalStorage{
                         image.setAlbumID("0");
                         image.setInformation(cursor.getString(nameColumn));
                         String date = cursor.getString(dateColumn);
-                        image.setExifDatetime(date);
+                        long timestamp = Long.parseLong(date);
+                        Date newdate = new Date(timestamp * 1000);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                        String formattedDate = sdf.format(newdate);
+                        image.setExifDatetime(formattedDate);
                         image.setFilePath(cursor.getString(pathColumn));
                         String mimeType = cursor.getString(mimeTypeColumn);
 
