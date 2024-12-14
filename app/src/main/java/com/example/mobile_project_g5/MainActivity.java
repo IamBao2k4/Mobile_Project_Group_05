@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int REQUEST_CODE_MANAGE_STORAGE = 1000 ;
+    private static final int REQUEST_CODE_MANAGE_STORAGE = 1000;
     private ActivityMainBinding binding;
     public Fragment selectedFragment = new PhotosFragment();
     SharedPreferences sharedPreferences;
@@ -43,10 +43,12 @@ public class MainActivity extends AppCompatActivity {
     Context context = this;
     SQLiteDataBase sql;
     ReadMediaFromExternalStorage readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            EdgeToEdge.enable(this);
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+ (API 33)
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -81,48 +83,52 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Storage Permission", "READ_EXTERNAL_STORAGE granted");
             }
         }
+    }
 
-        // Đảm bảo việc cập nhật giao diện người dùng luôn chạy trên UI thread
-            readMediaFromExternalStorage.loadMediaData().thenAccept(new Consumer<List<ImageClass>>() {
-                @Override
-                public void accept(List<ImageClass> mediaList) {
-                    // Cập nhật giao diện người dùng trong UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d("MainActivity", "Media list size: " + mediaList.size());
-                            setContentView(R.layout.activity_main);
-                            loadFragment(selectedFragment);
-
-                            sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);
-                            editor = sharedPreferences.edit();
-
-                            if(sharedPreferences.contains("isDarkModeOn")){
-                                boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
-                                setDarkLightMode(isDarkModeOn);
-                            }
-                            else {
-                                editor.putBoolean("isDarkModeOn", false);
-                                editor.apply();
-                            }
-
-                            binding = ActivityMainBinding.inflate(getLayoutInflater());
-                            setContentView(binding.getRoot());
-
-                            onNavigationButtonClick(binding.getRoot());
-                        }
-                    });
-                }
-            });
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_MANAGE_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Storage Permission", "Permission granted");
+                proceedWithFunctionality();
+            } else {
+                Log.d("Storage Permission", "Permission denied");
+            }
         }
-        //    Navigation button handle
+    }
+
+    private void proceedWithFunctionality() {
+        // Chức năng bạn muốn thực hiện sau khi có quyền
+        List<ImageClass> mediaList = readMediaFromExternalStorage.loadMediaData();
+        Log.d("MainActivity", "Media list size: " + mediaList.size());
+        loadFragment(selectedFragment);
+
+        sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if (sharedPreferences.contains("isDarkModeOn")) {
+            boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+            setDarkLightMode(isDarkModeOn);
+        } else {
+            editor.putBoolean("isDarkModeOn", false);
+            editor.apply();
+        }
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        onNavigationButtonClick(binding.getRoot());
+    }
+
+    //    Navigation button handle
     public void onNavigationButtonClick(View view) {
         binding.navButton.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (R.id.nav_photos == itemId) {
                 selectedFragment = new PhotosFragment();
             } else if (R.id.nav_albums == itemId) {
-                 selectedFragment = new HomeFragment();
+                selectedFragment = new HomeFragment();
             } else if (R.id.nav_settings == itemId) {
                 showPopupMenu(findViewById(R.id.nav_settings));
                 return false; // Don't load fragment
@@ -151,37 +157,37 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu(R.menu.setting_menu);
 
         navigationView.setNavigationItemSelectedListener(item -> {
-                if(item.getItemId() == R.id.dark_light_mode) {
-                    if (sharedPreferences.contains("isDarkModeOn")) {
-                        boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
-                        setAndChangeDarkLightMode(isDarkModeOn);
-                    }
+            if(item.getItemId() == R.id.dark_light_mode) {
+                if (sharedPreferences.contains("isDarkModeOn")) {
+                    boolean isDarkModeOn = sharedPreferences.getBoolean("isDarkModeOn", false);
+                    setAndChangeDarkLightMode(isDarkModeOn);
                 }
-                else if (item.getItemId() == R.id.favorite_album) {
+            }
+            else if (item.getItemId() == R.id.favorite_album) {
 //                        selectedFragment = new FavoriteFragment();
 //                        loadFragment(selectedFragment);
-                        sql = new SQLiteDataBase(context);
-                        ImageClass[] images = sql.getFavoriteImages();
-                        AlbumClass favoriteAlbum = new AlbumClass("Favorite Album", "-1", null, images);
-                        Intent intent = AlbumDetailActivity.newIntent(context,favoriteAlbum, null);
-                        context.startActivity(intent);
-                }
-                else if (item.getItemId() == R.id.deleted_album) {
-                    sql = new SQLiteDataBase(context);
-                    ImageClass[] images = sql.getDeletedImage();
-                    AlbumClass deletedAlbum = new AlbumClass("Deleted Album", "-1", null, images);
-                    Intent intent = AlbumDetailActivity.newIntent(context,deletedAlbum, null);
-                    context.startActivity(intent);
+                sql = new SQLiteDataBase(context);
+                ImageClass[] images = sql.getFavoriteImages();
+                AlbumClass favoriteAlbum = new AlbumClass("Favorite Album", "-1", null, images);
+                Intent intent = AlbumDetailActivity.newIntent(context,favoriteAlbum, null);
+                context.startActivity(intent);
+            }
+            else if (item.getItemId() == R.id.deleted_album) {
+                sql = new SQLiteDataBase(context);
+                ImageClass[] images = sql.getDeletedImage();
+                AlbumClass deletedAlbum = new AlbumClass("Deleted Album", "-1", null, images);
+                Intent intent = AlbumDetailActivity.newIntent(context,deletedAlbum, null);
+                context.startActivity(intent);
 //                    selectedFragment = new DeleteFragment();
 //                    loadFragment(selectedFragment);
-                }
-                else if (item.getItemId() == R.id.action_option2) {
-                    IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
-                    Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
-                    AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
-                    Intent intent = AlbumDetailActivity.newIntent(context, duplicate, groups);
-                    context.startActivity(intent);
-                }
+            }
+            else if (item.getItemId() == R.id.action_option2) {
+                IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
+                Map<Integer, List<ImageClass>> groups = identifyDuplicateImage.GroupDuplicateImages();
+                AlbumClass duplicate = identifyDuplicateImage.toAlbumClass(groups);
+                Intent intent = AlbumDetailActivity.newIntent(context, duplicate, groups);
+                context.startActivity(intent);
+            }
             bottomSheetDialog.dismiss();
             return true;
         });
@@ -190,26 +196,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setDarkLightMode(boolean isDarkModeOn) {
-        if(isDarkModeOn)
-        {
+        if (isDarkModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }
-        else
-        {
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
 
     public void setAndChangeDarkLightMode(boolean isDarkModeOn) {
-        if(isDarkModeOn)
-        {
+        if (isDarkModeOn) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            editor.putBoolean("isDarkModeOn",false);
-        }
-        else
-        {
+            editor.putBoolean("isDarkModeOn", false);
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            editor.putBoolean("isDarkModeOn",true);
+            editor.putBoolean("isDarkModeOn", true);
         }
         editor.apply();
     }
