@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +44,7 @@ public class AddImageActivity  extends AppCompatActivity {
             finish();
         });
 
-        Button back = findViewById(R.id.back_btn);
+        ImageButton back = findViewById(R.id.back_btn);
         back.setOnClickListener(view -> {
             finish();
         });

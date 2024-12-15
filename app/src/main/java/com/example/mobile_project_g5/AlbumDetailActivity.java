@@ -47,7 +47,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);
-        Button backBtn = findViewById(R.id.back_btn);
+        ImageButton backBtn = findViewById(R.id.back_btn);
         // if albumID = -1 => deleted albums view, favorite albums view,...
         if (albumID.equals("-1")){
             editBtn.setVisibility(View.GONE);

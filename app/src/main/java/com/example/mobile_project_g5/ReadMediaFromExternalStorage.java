@@ -71,7 +71,7 @@ public class ReadMediaFromExternalStorage{
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                         String formattedDate = sdf.format(newdate);
                         image.setExifDatetime(formattedDate);
-                        image.setFilePath(cursor.getString(pathColumn));
+                        image.setFilePath("file://"+cursor.getString(pathColumn));
                         String mimeType = cursor.getString(mimeTypeColumn);
 
                         // Kiểm tra loại file

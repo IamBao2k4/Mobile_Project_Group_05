@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,7 @@ public class FavoriteFragment extends Fragment {
         gridLayout = currentView.findViewById(R.id.favorite_grid);
         gridLayout.setAdapter(adapter);
 
-        Button backBtn = currentView.findViewById(R.id.back_btn);
+        ImageButton backBtn = currentView.findViewById(R.id.back_btn);
 
         backBtn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();

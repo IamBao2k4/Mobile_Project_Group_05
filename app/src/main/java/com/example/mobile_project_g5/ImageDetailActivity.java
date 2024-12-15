@@ -111,7 +111,7 @@ public class ImageDetailActivity extends AppCompatActivity {
         ImageButton editButton = findViewById(R.id.edit_button);
         imageView = findViewById(R.id.imgSoloPhoto);
 
-        Button backButton = findViewById(R.id.btnSoloBack);
+        ImageButton backButton = findViewById(R.id.back_btn);
 
         GlideImage(imagePath);
 

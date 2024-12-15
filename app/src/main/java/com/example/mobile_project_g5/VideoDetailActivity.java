@@ -19,7 +19,7 @@ public class VideoDetailActivity extends AppCompatActivity {
     private VideoView videoView;
     private ImageButton shareButton;
     private String videoPath;
-    private Button back;
+    private ImageButton back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
