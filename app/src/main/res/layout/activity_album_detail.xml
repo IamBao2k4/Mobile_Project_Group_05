@@ -64,11 +64,10 @@
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintLeft_toLeftOf="parent"
         >
-        <GridView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid_view_images"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:numColumns="2"
             android:verticalSpacing="10dp"
             android:horizontalSpacing="10dp"
             />

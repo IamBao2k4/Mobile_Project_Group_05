@@ -10,6 +10,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +27,9 @@ public class AddImageActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_image_layout);
         Button submit = findViewById(R.id.submit_btn);
-        GridView gridViewImages = findViewById(R.id.grid_view_images);
+        RecyclerView gridViewImages = findViewById(R.id.grid_view_images);
         ImageAdapter imageAdapter = new ImageAdapter(this, images, "add"); // Bạn cần tạo ImageAdapter
+        gridViewImages.setLayoutManager(new GridLayoutManager(this, 2));
         gridViewImages.setAdapter(imageAdapter);
 
         submit.setOnClickListener(view -> {

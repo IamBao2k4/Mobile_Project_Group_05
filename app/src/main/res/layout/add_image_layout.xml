@@ -43,13 +43,10 @@
                 android:text="Thêm" />
         </RelativeLayout>
 
-        <GridView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/grid_view_images"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:numColumns="2"
-            android:verticalSpacing="10dp"
-            android:horizontalSpacing="10dp"
             android:layout_weight="1"
             />
     </LinearLayout>

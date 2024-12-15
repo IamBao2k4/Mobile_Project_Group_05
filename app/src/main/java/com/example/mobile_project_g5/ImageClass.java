@@ -1,8 +1,9 @@
 package com.example.mobile_project_g5;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ImageClass implements Serializable {
+public class ImageClass implements Parcelable {
     private int imageID;
     private String albumID;
     private String filePath;
@@ -15,6 +16,7 @@ public class ImageClass implements Serializable {
     private String type;
 
     public ImageClass() {}
+
     public ImageClass(int imageID,
                       String albumID,
                       String filePath,
@@ -34,6 +36,50 @@ public class ImageClass implements Serializable {
         this.isSelected = isSelected;
         this.deleteAt = deleteAt;
         this.type = type;
+    }
+
+    protected ImageClass(Parcel in) {
+        imageID = in.readInt();
+        albumID = in.readString();
+        filePath = in.readString();
+        information = in.readString();
+        isFavorite = in.readInt();
+        exifDatetime = in.readString();
+        activate = in.readString();
+        isSelected = in.readInt();
+        deleteAt = in.readString();
+        type = in.readString();
+    }
+
+    public static final Creator<ImageClass> CREATOR = new Creator<ImageClass>() {
+        @Override
+        public ImageClass createFromParcel(Parcel in) {
+            return new ImageClass(in);
+        }
+
+        @Override
+        public ImageClass[] newArray(int size) {
+            return new ImageClass[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(imageID);
+        dest.writeString(albumID);
+        dest.writeString(filePath);
+        dest.writeString(information);
+        dest.writeInt(isFavorite);
+        dest.writeString(exifDatetime);
+        dest.writeString(activate);
+        dest.writeInt(isSelected);
+        dest.writeString(deleteAt);
+        dest.writeString(type);
     }
 
     // Các getter và setter cho các thuộc tính
@@ -61,13 +107,11 @@ public class ImageClass implements Serializable {
         return this.albumID;
     }
 
-    public void setFilePath(String filePath)
-    {
+    public void setFilePath(String filePath) {
         this.filePath = filePath;
     }
 
-    public String getFilePath()
-    {
+    public String getFilePath() {
         return this.filePath;
     }
 
@@ -110,12 +154,12 @@ public class ImageClass implements Serializable {
     public void setDeleteAt(String deleteAt) {
         this.deleteAt = deleteAt;
     }
-    public String getType(){
+
+    public String getType() {
         return type;
     }
 
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 }

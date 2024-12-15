@@ -13,12 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class FavoriteFragment extends Fragment {
     SQLiteDataBase sql;
     ImageAdapter adapter;
     ImageClass[] images;
-    GridView gridLayout;
+    RecyclerView gridLayout;
     ViewGroup currentView;
 
     @Nullable
@@ -31,6 +33,7 @@ public class FavoriteFragment extends Fragment {
         images = sql.getFavoriteImages();
         adapter = new ImageAdapter(getContext(), images, "favorite");
         gridLayout = currentView.findViewById(R.id.favorite_grid);
+        gridLayout.setLayoutManager(new GridLayoutManager(getContext(), 2));
         gridLayout.setAdapter(adapter);
 
         ImageButton backBtn = currentView.findViewById(R.id.back_btn);

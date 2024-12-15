@@ -13,12 +13,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DeleteFragment extends Fragment {
     SQLiteDataBase sql;
     ImageAdapter adapter;
     ImageClass[] images;
-    GridView gridLayout;
+    RecyclerView gridLayout;
     ViewGroup currentView;
 
     @Nullable
@@ -31,6 +33,7 @@ public class DeleteFragment extends Fragment {
         images = sql.getDeletedImage();
         adapter = new ImageAdapter(getContext(), images, "deleted");
         gridLayout = currentView.findViewById(R.id.deleted_grid);
+        gridLayout.setLayoutManager(new GridLayoutManager(getContext(), 2));
         gridLayout.setAdapter(adapter);
 
         ImageButton backBtn = currentView.findViewById(R.id.back_btn);

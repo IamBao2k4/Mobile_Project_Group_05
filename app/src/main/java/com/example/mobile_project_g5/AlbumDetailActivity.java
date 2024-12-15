@@ -12,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
     private static ImageClass[] images = new ImageClass[0];
     public static AlbumClass curAlbum;
     public static Map<Integer, List<ImageClass>> groups;
-    private GridView gridViewImages;
+    private RecyclerView gridViewImages;
 
     private ImageAdapter imageAdapter;
 
@@ -44,6 +46,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
         gridViewImages = findViewById(R.id.grid_view_images);
         imageAdapter = new ImageAdapter(this, curAlbum.getImages(),""); //tạo ImageAdapter
+        gridViewImages.setLayoutManager(new GridLayoutManager(this, 2));
         gridViewImages.setAdapter(imageAdapter);
         Button editBtn = findViewById(R.id.edit_btn);
         ImageButton addBtn = findViewById(R.id.add_btn);

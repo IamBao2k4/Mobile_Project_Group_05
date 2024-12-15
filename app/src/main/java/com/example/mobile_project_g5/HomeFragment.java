@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import android.text.Editable;
@@ -34,7 +36,6 @@ public class HomeFragment extends Fragment {
     ViewGroup currentView;
 
     private boolean isEdit = false;
-    private String newAlbumName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,8 +43,9 @@ public class HomeFragment extends Fragment {
         sql = new SQLiteDataBase(this.getContext());
         albums = sql.getAlbum();
 
-        GridView gridLayout = currentView.findViewById(R.id.grid_layout);
+        RecyclerView gridLayout = currentView.findViewById(R.id.grid_layout);
         AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), albums);
+        gridLayout.setLayoutManager(new GridLayoutManager(getContext(), 2));
         gridLayout.setAdapter(adapter);
 
         Button editBtn = currentView.findViewById(R.id.edit_btn);
@@ -134,8 +136,9 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         albums = sql.getAlbum();
-        GridView gridLayout = currentView.findViewById(R.id.grid_layout);
+        RecyclerView gridLayout = currentView.findViewById(R.id.grid_layout);
         AlbumItemAdapter adapter = new AlbumItemAdapter(this.getContext(), albums);
+        gridLayout.setLayoutManager(new GridLayoutManager(getContext(), 2));
         gridLayout.setAdapter(adapter);
     }
 }

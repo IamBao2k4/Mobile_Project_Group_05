@@ -1,36 +1,28 @@
 package com.example.mobile_project_g5;
 
-import static com.example.mobile_project_g5.AlbumDetailActivity.REQUEST_CODE_DELETE_IMAGE;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.load.resource.bitmap.FitCenter;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-//import com.bumptech.glide.Glide; // Thư viện tải hình ảnh
-
-public class ImageAdapter extends BaseAdapter {
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
     protected Context context;
     protected ImageClass[] images;
     protected String type;
@@ -53,197 +43,116 @@ public class ImageAdapter extends BaseAdapter {
         this.type = type;
     }
 
+    @NonNull
     @Override
-    public int getCount() {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_image_layout, parent, false);
+        return new ViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        ImageClass image = images[position];
+        String fileType = image.getType();
+
+        if (type.equals("add")) {
+            holder.select.setImageResource(R.drawable.ic_baseline_check_24);
+            holder.select.setVisibility(View.VISIBLE);
+            this.isEdit = true;
+        }
+
+        if (fileType.equals("image")) {
+            holder.videoIcon.setVisibility(View.GONE);
+            holder.videoDuration.setVisibility(View.GONE);
+            Glide.with(context)
+                    .load(image.getFilePath())
+                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
+                    .into(holder.imageView);
+        } else if (fileType.equals("video")) {
+            holder.videoIcon.setVisibility(View.VISIBLE);
+            holder.videoDuration.setVisibility(View.VISIBLE);
+            String resourcePath = image.getFilePath();
+            Bitmap thumbnail = getVideoThumbnail(resourcePath);
+            Glide.with(context)
+                    .load(thumbnail)
+                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
+                    .into(holder.imageView);
+            String durationStr = getVideoDuration(resourcePath);
+            if (durationStr != null) {
+                long duration = Long.parseLong(durationStr);
+                String formattedDuration = formatDuration(duration);
+                holder.videoDuration.setText(formattedDuration);
+            }
+        }
+
+        if (isEdit) {
+            holder.select.setVisibility(View.VISIBLE);
+        } else {
+            holder.select.setVisibility(View.GONE);
+        }
+
+        holder.select.setOnClickListener(view -> {
+            holder.select.setColorFilter(Color.BLUE);
+            if (Objects.equals(type, "add")) {
+                if (images_chosen.contains(image)) {
+                    images_chosen.remove(image);
+                    return;
+                }
+                images_chosen.add(image);
+                return;
+            }
+            showDeleteDialog(position);
+            holder.select.setColorFilter(Color.RED);
+        });
+
+        holder.imageView.setOnClickListener(v -> {
+            if (image.getType().equals("image")) {
+                Intent intent = ImageDetailActivity.newIntent(context, image.getFilePath(), image.getInformation(), type, image.getAlbumID());
+                context.startActivity(intent);
+            } else if (image.getType().equals("video")) {
+                Intent intent = VideoDetailActivity.newIntent(context, image.getFilePath(), image.getInformation());
+                context.startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
         return images.length;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return images[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     public List<ImageClass> getImages_chosen() {
         return images_chosen;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.item_image_layout, parent, false);
+    private Bitmap getVideoThumbnail(String resourcePath) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        if (resourcePath.contains("android.resource")) {
+            String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+            @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier(resourceName, "raw", context.getPackageName());
+            AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
+            retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            return retriever.getFrameAtTime(0);
+        } else {
+            retriever.setDataSource(resourcePath);
+            return retriever.getFrameAtTime(0);
         }
-
-        ImageView imageView = convertView.findViewById(R.id.image_view);
-        ImageView videoIcon = convertView.findViewById(R.id.video_icon);
-        TextView videoDuration = convertView.findViewById(R.id.video_duration);
-        ImageView select = convertView.findViewById(R.id.select);
-        if(type.equals("add")){
-            select.setImageResource(R.drawable.ic_baseline_check_24);
-            select.setVisibility(View.VISIBLE);
-            this.isEdit = true;
-        }
-        // Kiểm tra loại tệp
-        String fileType = images[position].getType(); // Thêm phương thức getType() vào model
-
-        if (fileType.equals("image")) {
-            videoIcon.setVisibility(View.GONE); // Ẩn biểu tượng video
-            videoDuration.setVisibility(View.GONE); // Ẩn thời lượng video
-            //Uri imageUri = Uri.parse(images[position].getFilePath());
-            Glide.with(context)
-                    .load(images[position].getFilePath())
-                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25)))
-                    .into(imageView);
-        }
-        else if (fileType.equals("video")) {
-            videoIcon.setVisibility(View.VISIBLE); // Hiển thị biểu tượng video
-            videoDuration.setVisibility(View.VISIBLE); // Hiển thị thời lượng video
-            String resourcePath = images[position].getFilePath();
-            if (resourcePath.contains("android.resource"))
-            {
-                String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
-                @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier(resourceName, "raw", context.getPackageName());
-                // Lấy thumbnail video
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
-                retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
-                Glide.with(context)
-                        .load(thumbnail)
-                        .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc 25px
-                        .into(imageView);
-
-                // Lấy thời lượng video
-                retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-                String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                try {
-                    retriever.release();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                try {
-                    afd.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                if (durationStr != null) {
-                    long duration = Long.parseLong(durationStr);
-                    String formattedDuration = formatDuration(duration);
-                    videoDuration.setText(formattedDuration);
-                }
-            }
-            else {
-                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                retriever.setDataSource(resourcePath); // Đường dẫn tệp video
-                Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
-                Glide.with(context)
-                        .load(thumbnail)
-                        .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc
-                        .into(imageView);
-
-                // Lấy thời lượng video
-                String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-                try {
-                    retriever.release();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                if (durationStr != null) {
-                    long duration = Long.parseLong(durationStr);
-                    String formattedDuration = formatDuration(duration);
-                    videoDuration.setText(formattedDuration);
-                }
-            }
-//
-
-        }
-        if(isEdit){
-            select.setVisibility(View.VISIBLE);
-        }
-        else{
-            select.setVisibility(View.GONE);
-        }
-
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                select.setColorFilter(Color.BLUE);
-                if(Objects.equals(type, "add")) {
-                    if(images_chosen.contains(images[position])){
-                        images_chosen.remove(images[position]);
-                        return;
-                    }
-                    images_chosen.add(images[position]);
-                    return;
-                }
-                // Tạo AlertDialog xác nhận xóa
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("Xóa ảnh");
-                builder.setMessage("Bạn có chắc chắn muốn xóa ảnh này?");
-
-                builder.setPositiveButton("Xác nhận", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Xử lý khi người dùng nhấn Xác nhận
-                        try (SQLiteDataBase sql = new SQLiteDataBase(context)) {
-                            if (position < images.length) {
-                                sql.deleteImage(String.valueOf(images[position].getImageID()));
-                                images = sql.getImagesByAlbumId(images[0].getAlbumID());
-                                notifyDataSetChanged();
-                                Toast.makeText(context, "Đã xóa thành công", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(context, "Không thể xóa ảnh", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
-
-                builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Đóng hộp thoại khi người dùng nhấn Hủy
-                        dialog.dismiss();
-                    }
-                });
-
-                AlertDialog dialog = builder.create();
-                dialog.show();
-                select.setColorFilter(Color.RED);
-            }
-        });
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (images[position].getType().equals("image")) {
-                    Intent intent = ImageDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation(), type, images[position].getAlbumID());
-                    intent.putExtra("image_path", images[position].getFilePath());
-                    intent.putExtra("image_info", images[position].getInformation());
-                    intent.putExtra("album_id", images[position].getAlbumID());
-                    context.startActivity(intent);
-                    //((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
-                }
-                if (images[position].getType().equals("video")) {
-                    Intent intent = VideoDetailActivity.newIntent(context, images[position].getFilePath(), images[position].getInformation());
-                    intent.putExtra("image_path", images[position].getFilePath());
-                    intent.putExtra("image_info", images[position].getInformation());
-                    context.startActivity(intent);
-                    //((Activity) context).startActivityForResult(intent, REQUEST_CODE_DELETE_IMAGE);
-                }
-            }
-        });
-
-        return convertView;
     }
 
-    // Hàm định dạng thời lượng video
+    private String getVideoDuration(String resourcePath) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        if (resourcePath.contains("android.resource")) {
+            String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+            @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier(resourceName, "raw", context.getPackageName());
+            AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
+            retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        } else {
+            retriever.setDataSource(resourcePath);
+            return retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        }
+    }
+
     protected String formatDuration(long durationMillis) {
         long seconds = (durationMillis / 1000) % 60;
         long minutes = (durationMillis / (1000 * 60)) % 60;
@@ -256,6 +165,26 @@ public class ImageAdapter extends BaseAdapter {
         }
     }
 
+    private void showDeleteDialog(int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Xóa ảnh");
+        builder.setMessage("Bạn có chắc chắn muốn xóa ảnh này?");
+        builder.setPositiveButton("Xác nhận", (dialog, which) -> {
+            try (SQLiteDataBase sql = new SQLiteDataBase(context)) {
+                if (position < images.length) {
+                    sql.deleteImage(String.valueOf(images[position].getImageID()));
+                    images = sql.getImagesByAlbumId(images[0].getAlbumID());
+                    notifyDataSetChanged();
+                    Toast.makeText(context, "Đã xóa thành công", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Không thể xóa ảnh", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
     public void removeImage(String imagePath) {
         int length = images.length;
@@ -267,12 +196,11 @@ public class ImageAdapter extends BaseAdapter {
                 newImages[index++] = images[i];
             }
         }
-        // VideoView, MediaController
         images = newImages;
         notifyDataSetChanged();
     }
 
-    public void setEditMode(){
+    public void setEditMode() {
         this.isEdit = !this.isEdit;
         notifyDataSetChanged();
     }
@@ -280,9 +208,7 @@ public class ImageAdapter extends BaseAdapter {
     public void addImage(String restoredImagePath) {
         int length = images.length;
         ImageClass[] newImages = new ImageClass[length + 1];
-        for (int i = 0; i < length; i++) {
-            newImages[i] = images[i];
-        }
+        System.arraycopy(images, 0, newImages, 0, length);
         SQLiteDataBase dbHelper = new SQLiteDataBase(context);
         ImageClass image = dbHelper.getImageByPath(restoredImagePath);
         newImages[length] = new ImageClass(
@@ -298,6 +224,19 @@ public class ImageAdapter extends BaseAdapter {
                 image.getType());
         images = newImages;
     }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView imageView;
+        public ImageView videoIcon;
+        public TextView videoDuration;
+        public ImageView select;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.image_view);
+            videoIcon = itemView.findViewById(R.id.video_icon);
+            videoDuration = itemView.findViewById(R.id.video_duration);
+            select = itemView.findViewById(R.id.select);
+        }
+    }
 }
-
-
