@@ -72,6 +72,8 @@ public class ReadMediaFromExternalStorage{
                         String formattedDate = sdf.format(newdate);
                         image.setExifDatetime(formattedDate);
                         image.setFilePath("file://"+cursor.getString(pathColumn));
+                        //image.setFilePath(cursor.getString(pathColumn));
+
                         String mimeType = cursor.getString(mimeTypeColumn);
 
                         // Kiểm tra loại file
@@ -101,16 +103,20 @@ public class ReadMediaFromExternalStorage{
         return mediaList;
     }
 
-//    void loadImagesOnce() {
-//        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
-//        boolean isLoaded = prefs.getBoolean("isLoaded", false);
-//
-//
-//            loadMedia();
-//            SharedPreferences.Editor editor = prefs.edit();
-//            editor.putBoolean("isLoaded", true);
-//            editor.apply();
-//
-//    }
+    void loadImagesOnce() {
+        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean isLoaded = prefs.getBoolean("isLoaded", false);
+        if (!isLoaded) {
+            loadMediaData();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isLoaded", true);
+            editor.apply();
+        }
+        else {
+            Log.d("MediaCursor", "Images already loaded");
+            //Toast.makeText(context, "Images already loaded", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 }

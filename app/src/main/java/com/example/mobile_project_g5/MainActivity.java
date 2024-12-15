@@ -104,9 +104,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         sql = new SQLiteDataBase(context);
         readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
-        List<ImageClass> mediaList = readMediaFromExternalStorage.loadMediaData();
+        readMediaFromExternalStorage.loadImagesOnce();
         selectedFragment = new PhotosFragment();
-        Log.d("MainActivity", "Media list size: " + mediaList.size());
+        //Log.d("MainActivity", "Media list size: " + mediaList.size());
         loadFragment(selectedFragment);
 
         sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);

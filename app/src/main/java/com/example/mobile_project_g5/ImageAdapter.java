@@ -101,40 +101,67 @@ public class ImageAdapter extends BaseAdapter {
                     .into(imageView);
         }
         else if (fileType.equals("video")) {
-//            videoIcon.setVisibility(View.VISIBLE); // Hiển thị biểu tượng video
-//            videoDuration.setVisibility(View.VISIBLE); // Hiển thị thời lượng video
-//            String resourcePath = images[position].getFilePath();
-//            String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
-//            @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier(resourceName, "raw", context.getPackageName());
-//            // Lấy thumbnail video
-//            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-//            AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
-//            retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-//            Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
-//            Glide.with(context)
-//                    .load(thumbnail)
-//                    .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc 25px
-//                    .into(imageView);
+            videoIcon.setVisibility(View.VISIBLE); // Hiển thị biểu tượng video
+            videoDuration.setVisibility(View.VISIBLE); // Hiển thị thời lượng video
+            String resourcePath = images[position].getFilePath();
+            if (resourcePath.contains("android.resource"))
+            {
+                String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+                @SuppressLint("DiscouragedApi") int resId = context.getResources().getIdentifier(resourceName, "raw", context.getPackageName());
+                // Lấy thumbnail video
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                AssetFileDescriptor afd = context.getResources().openRawResourceFd(resId);
+                retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
+                Glide.with(context)
+                        .load(thumbnail)
+                        .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc 25px
+                        .into(imageView);
+
+                // Lấy thời lượng video
+                retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                try {
+                    retriever.release();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    afd.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (durationStr != null) {
+                    long duration = Long.parseLong(durationStr);
+                    String formattedDuration = formatDuration(duration);
+                    videoDuration.setText(formattedDuration);
+                }
+            }
+            else {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(resourcePath); // Đường dẫn tệp video
+                Bitmap thumbnail = retriever.getFrameAtTime(0); // Lấy frame đầu tiên
+                Glide.with(context)
+                        .load(thumbnail)
+                        .apply(new RequestOptions().transform(new CenterCrop(), new RoundedCorners(25))) // Bo tròn góc
+                        .into(imageView);
+
+                // Lấy thời lượng video
+                String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                try {
+                    retriever.release();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (durationStr != null) {
+                    long duration = Long.parseLong(durationStr);
+                    String formattedDuration = formatDuration(duration);
+                    videoDuration.setText(formattedDuration);
+                }
+            }
 //
-//            // Lấy thời lượng video
-//            retriever.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-//            String durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-//            try {
-//                retriever.release();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//            try {
-//                afd.close();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            if (durationStr != null) {
-//                long duration = Long.parseLong(durationStr);
-//                String formattedDuration = formatDuration(duration);
-//                videoDuration.setText(formattedDuration);
-//            }
 
         }
         if(isEdit){

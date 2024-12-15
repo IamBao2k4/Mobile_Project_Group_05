@@ -77,16 +77,28 @@ public class IdentifyDuplicateImage {
         return true;
     }
     public Bitmap ImagetoBitmap(String path){
-        String resourceName = path.substring(path.lastIndexOf("/") + 1);
+        if(path.contains("android.resource"))
+        {
+            String resourceName = path.substring(path.lastIndexOf("/") + 1);
 
-        // Lấy resourceId
-        int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
-        try {
-            Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(),resId);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            // Lấy resourceId
+            int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+            try {
+                Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(), resId);
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(path);
+                return bitmap;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
     public Map<Integer, List<ImageClass>> GroupDuplicateImages() {

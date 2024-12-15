@@ -35,6 +35,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public SQLiteDataBase(Context context) {
         super(context, DB_NAME, null, 1);
         this.context = context;
+        File dbFile = context.getDatabasePath(DB_NAME);
 
     }
 
