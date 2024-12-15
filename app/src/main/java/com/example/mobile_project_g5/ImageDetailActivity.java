@@ -225,10 +225,10 @@ public class ImageDetailActivity extends AppCompatActivity {
     private void GlideImage(String curImagePath) {
         // Load image from path for solo view
         if (!curImagePath.isEmpty()) {
-            Uri imageUri = Uri.parse(curImagePath);
+            //Uri imageUri = Uri.parse(curImagePath);
             // Use Glide to load and display the image with fitCenter transformation
             Glide.with(this)
-                    .load(imageUri)
+                    .load(imagePath)
                     .apply(new RequestOptions().fitCenter())
                     .listener(new RequestListener<Drawable>() {
                         @Override

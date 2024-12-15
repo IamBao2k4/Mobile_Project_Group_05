@@ -60,8 +60,12 @@ public class AlbumDetailActivity extends AppCompatActivity {
                 imageAdapter.setEditMode();
                 if(imageAdapter.isEdit) {
                     editBtn.setText("Done");
+                    addBtn.setVisibility(View.VISIBLE);
+                    backBtn.setVisibility(View.GONE);
                 } else {
                     editBtn.setText("Edit");
+                    addBtn.setVisibility(View.GONE);
+                    backBtn.setVisibility(View.VISIBLE);
                 }
             }
         });
