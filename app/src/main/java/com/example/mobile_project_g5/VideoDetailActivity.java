@@ -17,9 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class VideoDetailActivity extends AppCompatActivity {
 
     private VideoView videoView;
-    private ImageButton shareButton;
     private String videoPath;
-    private ImageButton back;
+    private ImageClass image;
+    private SQLiteDataBase sql;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +28,46 @@ public class VideoDetailActivity extends AppCompatActivity {
 
         // Khởi tạo các view
         videoView = findViewById(R.id.videoView);
-        shareButton = findViewById(R.id.share_button);
-        back = findViewById(R.id.btnSoloBack);
+        ImageButton settingsButton = findViewById(R.id.settings_button);
+        ImageButton favoriteButton = findViewById(R.id.favorite_button);
+        ImageButton deleteButton = findViewById(R.id.delete_button);
+        ImageButton restoreButton = findViewById(R.id.restore_button);
+        ImageButton shareButton = findViewById(R.id.share_button);
+        ImageButton editButton = findViewById(R.id.edit_button);
+        ImageButton backBtn = findViewById(R.id.btnSoloBack);
+
         // Lấy đường dẫn video từ Intent
         videoPath = getIntent().getStringExtra("video_path");
+        sql = new SQLiteDataBase(this);
+        image = sql.getImageByPath(videoPath);
+
+        if(image.getIsFavorite() == 1){
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+        }
+        else{
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+        }
+
+        if(image.getActivate().equals("0"))
+        {
+            editButton.setVisibility(View.GONE);
+            deleteButton.setVisibility(View.GONE);
+            restoreButton.setVisibility(View.VISIBLE);
+            favoriteButton.setVisibility(View.GONE);
+            shareButton.setVisibility(View.GONE);
+        }
+        else
+        {
+            editButton.setVisibility(View.VISIBLE);
+            deleteButton.setVisibility(View.VISIBLE);
+            restoreButton.setVisibility(View.GONE);
+            favoriteButton.setVisibility(View.VISIBLE);
+            shareButton.setVisibility(View.VISIBLE);
+        }
+
+        settingsButton.setVisibility(View.GONE);
+        restoreButton.setVisibility(View.GONE);
+        editButton.setVisibility(View.GONE);
 
         // Thiết lập VideoView
         MediaController mediaController = new MediaController(this);
@@ -59,11 +95,27 @@ public class VideoDetailActivity extends AppCompatActivity {
             }
             return false; // Trả về false để sự kiện touch không bị chặn
         });
-        back.setOnClickListener(v -> {
+        backBtn.setOnClickListener(v -> {
             finish();
         });
 
+        favoriteButton.setOnClickListener(v -> {
+            toggleFavorite(image, favoriteButton, sql);
+        });
+
         shareButton.setOnClickListener(v -> shareVideo());
+    }
+
+    private void toggleFavorite(ImageClass image, ImageButton favoriteButton, SQLiteDataBase sql) {
+        if(image.getIsFavorite() == 1){
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_border_24);
+            image.setIsFavorite(0);
+        }
+        else{
+            favoriteButton.setImageResource(R.drawable.ic_baseline_favorite_24);
+            image.setIsFavorite(1);
+        }
+        sql.updateImage(image);
     }
 
     private void shareVideo() {
