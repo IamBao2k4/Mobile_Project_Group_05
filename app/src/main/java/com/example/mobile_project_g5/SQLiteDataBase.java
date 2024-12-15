@@ -35,12 +35,68 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public SQLiteDataBase(Context context) {
         super(context, DB_NAME, null, 1);
         this.context = context;
+
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        File dbFile = context.getDatabasePath(DB_NAME);
-        copyDatabase(dbFile);
+        //File dbFile = context.getDatabasePath(DB_NAME);
+        CreateTables(db);
+    }
+
+    private void CreateTables(SQLiteDatabase db) {
+        String createAlbumQuery = "CREATE TABLE IF NOT EXISTS Album (" +
+                "Id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "Name TEXT NOT NULL," +
+                "Information TEXT" +
+                ")";
+        db.execSQL(createAlbumQuery);
+
+        String createImageQuery = "CREATE TABLE IF NOT EXISTS Image (" +
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "Album_Id INTEGER NOT NULL," +
+                "file_path TEXT NOT NULL," +
+                "Information TEXT," +
+                "is_favorite INTEGER," +
+                "exif_datetime TEXT," +
+                "activate TEXT," +
+                "is_selected INTEGER," +
+                "deleted_at TEXT," +
+                "type TEXT" +
+                ")";
+        db.execSQL(createImageQuery);
+        InsertMockData(db);
+    }
+
+    private void InsertMockData(SQLiteDatabase db) {
+        String insertAlbumQuery = "INSERT INTO Album (Name, Information) VALUES " +
+                "('Album 1', 'ALbum 1')," +
+                "('ALbum 2', 'ALbum 2')," +
+                "('Album 3', 'ALbum 3')";
+        db.execSQL(insertAlbumQuery);
+
+        String insertImageQuery = "INSERT INTO Image (Album_Id, file_path, Information, is_favorite, exif_datetime, activate, is_selected, deleted_at, type) VALUES " +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/banana', 'Information1', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/cherry', 'Information2', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/elderberry', 'Information3', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/fig', 'Information4', 0, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/grape', 'Information5', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/honeydew', 'Information6', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/kiwi', 'Information7', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/lemon', 'Information8', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/mango', 'Information9', 1, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/nectarine', 'Information10', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/apple', 'Information11', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/tangerine', 'Information12', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/orange', 'Information13', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/pear', 'Information14', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/drawable/raspberry', 'Information15', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/strawberry', 'Information16', 0, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/strawberry', 'Information17', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/anhtrung1', 'Information18', 0, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/anhtrung2', 'Information19', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(1, 'android.resource://com.example.mobile_project_g5/raw/videoplaceholder', 'Information20', 0, '2024-11-24 00:00:00', 1, 0, NULL, 'video');";
+        db.execSQL(insertImageQuery);
     }
 
     @Override
@@ -51,6 +107,11 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         String dropImageQuery = "DROP TABLE IF EXISTS Image";
         db.execSQL(dropImageQuery);
         onCreate(db);
+    }
+
+    public SQLiteDatabase openDatabase() {
+        File dbFile = context.getDatabasePath(DB_NAME);
+        return SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
     }
 
     public AlbumClass[] getAlbum() {
@@ -94,29 +155,6 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return res.toArray(new AlbumClass[0]);
-    }
-
-    public SQLiteDatabase openDatabase() {
-        File dbFile = context.getDatabasePath(DB_NAME);
-        copyDatabase(dbFile);
-        return SQLiteDatabase.openDatabase(dbFile.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
-    }
-
-
-    private void copyDatabase(File dbFile) {
-        if (!dbFile.exists()) {
-            try {
-                InputStream openDB = context.getAssets().open(DB_NAME);
-                OutputStream copyDB = new FileOutputStream(dbFile);
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = openDB.read(buffer)) > 0) {
-                    copyDB.write(buffer, 0, length);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public void addAlbum(String name, String infor) {

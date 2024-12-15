@@ -4,15 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    >
 
-    <Button
-        android:id="@+id/btnSoloBack"
-        android:layout_width="100dip"
+    <ImageButton
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Back"
-    />
+        android:layout_gravity="start"
+        android:padding="10dp"
+        android:src="@drawable/arrow_left"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout"
+        app:layout_constraintLeft_toLeftOf="@id/linearLayout"
+        android:background="#00000000"
+        />
 
     <ImageView
         android:id="@+id/imgSoloPhoto"
