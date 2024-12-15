@@ -93,6 +93,7 @@ public class IdentifyDuplicateImage {
         }
         else {
             try {
+                path = path.replace("file://", "");
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
                 return bitmap;
             } catch (Exception e) {
