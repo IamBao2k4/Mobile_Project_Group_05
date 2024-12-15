@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
         readMediaFromExternalStorage.loadImagesOnce();
         selectedFragment = new PhotosFragment();
-        //Log.d("MainActivity", "Media list size: " + mediaList.size());
+
         loadFragment(selectedFragment);
 
         sharedPreferences = getSharedPreferences("isDarkModeOn", MODE_PRIVATE);
@@ -169,8 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else if (item.getItemId() == R.id.favorite_album) {
-//                        selectedFragment = new FavoriteFragment();
-//                        loadFragment(selectedFragment);
+
                 sql = new SQLiteDataBase(context);
                 ImageClass[] images = sql.getFavoriteImages();
                 AlbumClass favoriteAlbum = new AlbumClass("Favorite Album", "-1", null, images);
@@ -183,8 +182,6 @@ public class MainActivity extends AppCompatActivity {
                 AlbumClass deletedAlbum = new AlbumClass("Deleted Album", "-1", null, images);
                 Intent intent = AlbumDetailActivity.newIntent(context,deletedAlbum, null);
                 context.startActivity(intent);
-//                    selectedFragment = new DeleteFragment();
-//                    loadFragment(selectedFragment);
             }
             else if (item.getItemId() == R.id.action_option2) {
                 IdentifyDuplicateImage identifyDuplicateImage = new IdentifyDuplicateImage(context);
@@ -217,5 +214,15 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("isDarkModeOn", true);
         }
         editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
+        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        prefs.edit().putBoolean("isLoaded", false).apply();
+        readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
+        readMediaFromExternalStorage.loadImagesOnce();
     }
 }

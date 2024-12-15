@@ -93,7 +93,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/pear', 'Information14', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/raspberry', 'Information15', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(2, 'android.resource://com.example.mobile_project_g5/drawable/strawberry', 'Information16', 0, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
-                "(2, 'android.resource://com.example.mobile_project_g5/drawable/strawberry', 'Information17', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
+                "(2, 'android.resource://com.example.mobile_project_g5/drawable/strawberry1', 'Information17', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(3, 'android.resource://com.example.mobile_project_g5/drawable/anhtrung1', 'Information18', 0, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
                 "(2, 'android.resource://com.example.mobile_project_g5/drawable/anhtrung2', 'Information19', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(1, 'android.resource://com.example.mobile_project_g5/raw/videoplaceholder', 'Information20', 0, '2024-11-24 00:00:00', 1, 0, NULL, 'video');";

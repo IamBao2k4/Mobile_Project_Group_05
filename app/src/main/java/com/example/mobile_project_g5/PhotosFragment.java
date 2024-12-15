@@ -41,34 +41,9 @@ public class PhotosFragment extends Fragment {
 
         imageAdapter = new ImagesByDateAdapter(this.getContext(), dates, images);
         listViewItems.setAdapter(imageAdapter);
-        //setRecyclerViewHeight(listViewItems, 1);
 
         return currentView;
     }
-
-    public static void setRecyclerViewHeight(RecyclerView recyclerView, int columns) {
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                if (adapter != null) {
-                    int totalHeight = 0;
-                    for (int i = 0; i < adapter.getItemCount() / columns; i++) {
-                        View item = recyclerView.getLayoutManager().findViewByPosition(i);
-                        if (item != null) {
-                            totalHeight += item.getMeasuredHeight();
-                        }
-                    }
-                    ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
-                    params.height = totalHeight;
-                    recyclerView.setLayoutParams(params);
-                }
-                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-        });
-    }
-
-
 
     @Override
     public void onResume() {
@@ -82,20 +57,4 @@ public class PhotosFragment extends Fragment {
             listViewItems.setAdapter(imageAdapter);
         }
     }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putStringArray("dates", dates);
-//        outState.putParcelableArray("images", images);
-//    }
-//
-//    @Override
-//    public void onViewStateRestored(Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            dates = savedInstanceState.getStringArray("dates");
-//            images = (ImageClass[]) savedInstanceState.getParcelableArray("images");
-//        }
-//    }
 }

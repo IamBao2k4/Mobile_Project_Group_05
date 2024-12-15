@@ -93,6 +93,7 @@ public class IdentifyDuplicateImage {
         }
         else {
             try {
+                path = path.replace("file://", "");
                 Bitmap bitmap = BitmapFactory.decodeFile(path);
                 return bitmap;
             } catch (Exception e) {
@@ -122,7 +123,7 @@ public class IdentifyDuplicateImage {
 
             boolean isGrouped = false;
             for (String groupHash : hashToGroupMap.keySet()) {
-                if (isDuplicate(hash, groupHash)) {
+                if (hash!= null && isDuplicate(hash, groupHash)) {
                     Objects.requireNonNull(hashToGroupMap.get(groupHash)).add(image);
                     isGrouped = true;
                     break;
