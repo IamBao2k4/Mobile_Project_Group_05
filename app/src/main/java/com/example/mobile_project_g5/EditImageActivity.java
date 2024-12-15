@@ -143,8 +143,6 @@ public class EditImageActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn bộ lọc");
         builder.setItems(filters, (dialog, which) -> {
-            Bitmap originalBitmap = getBitmapFromPhotoEditorView();
-            Bitmap filteredBitmap = null;
             switch (which) {
                 case 0:
                     applySepiaFilter();
@@ -162,10 +160,7 @@ public class EditImageActivity extends AppCompatActivity {
                     applyInvertFilter();
                     break;
             }
-            if (filteredBitmap != null) {
-                photoEditorView.getSource().setImageBitmap(filteredBitmap);
-                Toast.makeText(this, "Đã áp dụng bộ lọc!", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(this, "Đã áp dụng bộ lọc!", Toast.LENGTH_SHORT).show();
         });
         builder.show();
     }
