@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -140,26 +143,42 @@ public class EditImageActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn bộ lọc");
         builder.setItems(filters, (dialog, which) -> {
+            Bitmap originalBitmap = getBitmapFromPhotoEditorView();
+            Bitmap filteredBitmap = null;
             switch (which) {
                 case 0:
-                    photoEditor.setFilterEffect(ja.burhanrashid52.photoeditor.PhotoFilter.SEPIA);
+                    applySepiaFilter();
                     break;
                 case 1:
                     applyGrayscaleFilter();
                     break;
                 case 2:
-                    photoEditor.setFilterEffect(ja.burhanrashid52.photoeditor.PhotoFilter.BRIGHTNESS);
+                    applyBrightnessFilter(50);
                     break;
                 case 3:
-                    photoEditor.setFilterEffect(ja.burhanrashid52.photoeditor.PhotoFilter.CONTRAST);
+                    applyContrastFilter(1.5f);
                     break;
                 case 4:
                     applyInvertFilter();
                     break;
             }
-            Toast.makeText(this, "Đã áp dụng bộ lọc!", Toast.LENGTH_SHORT).show();
+            if (filteredBitmap != null) {
+                photoEditorView.getSource().setImageBitmap(filteredBitmap);
+                Toast.makeText(this, "Đã áp dụng bộ lọc!", Toast.LENGTH_SHORT).show();
+            }
         });
         builder.show();
+    }
+
+    private void applySepiaFilter() {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.set(new float[]{
+                0.393f, 0.769f, 0.189f, 0f, 0f,
+                0.349f, 0.686f, 0.168f, 0f, 0f,
+                0.272f, 0.534f, 0.131f, 0f, 0f,
+                0f, 0f, 0f, 1f, 0f
+        });
+        photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
     }
 
     private void applyGrayscaleFilter() {
@@ -168,140 +187,110 @@ public class EditImageActivity extends AppCompatActivity {
         photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
     }
 
-    private void applyInvertFilter() {
+    private void applyBrightnessFilter(int brightness) {
         ColorMatrix matrix = new ColorMatrix();
         matrix.set(new float[]{
-                -1, 0, 0, 0, 255,
-                0, -1, 0, 0, 255,
-                0, 0, -1, 0, 255,
+                1, 0, 0, 0, brightness,
+                0, 1, 0, 0, brightness,
+                0, 0, 1, 0, brightness,
                 0, 0, 0, 1, 0
         });
         photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
     }
 
-    private void saveImage() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android >= 10: Sử dụng Scoped Storage
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.DISPLAY_NAME, "edited_image_" + System.currentTimeMillis() + ".png");
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-            values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/EditedImages");
-
-            ContentResolver resolver = getContentResolver();
-            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-            if (imageUri != null) {
-                try {
-                    String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
-                            + "/EditedImages/edited_image_" + System.currentTimeMillis() + ".png";
-
-                    photoEditor.saveAsFile(filePath, new PhotoEditor.OnSaveListener() {
-                        @Override
-                        public void onSuccess(@NonNull String imagePath) {
-
-                            SQLiteDataBase dbHelper = new SQLiteDataBase(EditImageActivity.this);
-                            dbHelper.addImage(image.getAlbumID(), imagePath, null);
-                            updateImageStatus(imagePath);
-
-                            Toast.makeText(EditImageActivity.this, "Ảnh đã lưu tại: " + imagePath, Toast.LENGTH_LONG).show();
-
-                            // Gọi hàm cập nhật Gallery
-                            notifyGallery(imagePath);
-
-                            reloadImageView(imagePath);
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(EditImageActivity.this, "Không thể lưu ảnh: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, "Không thể lưu ảnh!", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "Không thể tạo URI để lưu ảnh!", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            // Android < 10: Lưu ảnh vào bộ nhớ ngoài
-            File outputDir = new File(Environment.getExternalStorageDirectory(), "EditedImages");
-            if (!outputDir.exists() && !outputDir.mkdirs()) {
-                Toast.makeText(this, "Không thể tạo thư mục lưu ảnh!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            File outputFile = new File(outputDir, "edited_image_" + System.currentTimeMillis() + ".png");
-
-            try {
-                photoEditor.saveAsFile(outputFile.getAbsolutePath(), new PhotoEditor.OnSaveListener() {
-                    @Override
-                    public void onSuccess(@NonNull String imagePath) {
-                        SQLiteDataBase dbHelper = new SQLiteDataBase(EditImageActivity.this);
-                        dbHelper.addImage(null, imagePath, null);
-                        updateImageStatus(imagePath);
-
-                        Toast.makeText(EditImageActivity.this, "Ảnh đã lưu tại: " + imagePath, Toast.LENGTH_LONG).show();
-
-                        // Gọi hàm cập nhật Gallery
-                        notifyGallery(imagePath);
-
-                        reloadImageView(imagePath);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(EditImageActivity.this, "Không thể lưu ảnh: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Không thể lưu ảnh!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    // Cập nhật trạng thái active = 1 cho ảnh trong cơ sở dữ liệu (hoặc lưu trữ)
-    private void updateImageStatus(String imagePath) {
-        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
-        // Giả sử bạn lưu ảnh trong SQLite, cập nhật trạng thái active = 1
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("active", 1); // Cập nhật trạng thái active = 1
-        values.put("image_path", imagePath); // Đường dẫn ảnh
-
-        String whereClause = "image_path = ?";
-        String[] whereArgs = {imagePath};
-
-        int rows = database.update("images", values, whereClause, whereArgs);
-        if (rows > 0) {
-            Log.d("EditImageActivity", "Cập nhật trạng thái active = 1 thành công!");
-        }
-    }
-
-    // Cập nhật lại giao diện sau khi lưu ảnh
-    private void reloadImageView(String imagePath) {
-        Glide.with(this)
-                .load(imagePath)
-                .into(photoEditorView.getSource());  // Cập nhật lại hình ảnh trong ImageView
-    }
-
-    // Thêm ảnh vào thư viện để hiển thị trong ứng dụng ảnh của hệ thống
-    private void notifyGallery(String imagePath) {
-        MediaScannerConnection.scanFile(this, new String[]{imagePath}, null, (path, uri) -> {
-            // Callback khi hoàn tất quét
-            Log.d("EditImageActivity", "Gallery đã cập nhật: " + path);
+    private void applyContrastFilter(float contrast) {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.set(new float[]{
+                contrast, 0f, 0f, 0f, 128f * (1 - contrast),
+                0f, contrast, 0f, 0f, 128f * (1 - contrast),
+                0f, 0f, contrast, 0f, 128f * (1 - contrast),
+                0f, 0f, 0f, 1f, 0f
         });
+        photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
     }
 
+    private void applyInvertFilter() {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.set(new float[]{
+                -1f, 0f, 0f, 0f, 255f,
+                0f, -1f, 0f, 0f, 255f,
+                0f, 0f, -1f, 0f, 255f,
+                0f, 0f, 0f, 1f, 0f
+        });
+        photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
+    }
+
+    private Bitmap getBitmapFromPhotoEditorView() {
+        // Kích hoạt cache và lấy bitmap
+        photoEditorView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(photoEditorView.getDrawingCache());
+        photoEditorView.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    private void saveImage() {
+        Bitmap bitmap = getBitmapFromPhotoEditorView();
+
+        try {
+            OutputStream outputStream;
+            String imagePath = "";
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DISPLAY_NAME, "edited_image_" + System.currentTimeMillis() + ".png");
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+                values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Edit Image");
+
+                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                outputStream = getContentResolver().openOutputStream(uri);
+                imagePath = uri.toString();
+
+            } else {
+                File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES), "EditedImages");
+
+                if(!storageDir.exists()){
+                    storageDir.mkdirs();
+                }
+
+                String fileName = "edited_image_" + + System.currentTimeMillis() + ".png";
+                File imageFile = new File(storageDir, fileName);
+                outputStream = new FileOutputStream(imageFile);
+
+                Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri contentUri = Uri.fromFile(imageFile);
+                mediaScanIntent.setData(contentUri);
+                sendBroadcast(mediaScanIntent);
+            }
+
+            // Lưu bitmap vào file
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            String albumID = getIntent().getStringExtra("album_id");
+
+            SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+            dbHelper.addImage(albumID, imagePath, "edit image");
+
+            Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Failed to save image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void Undo() {
-        photoEditor.undo();
+        if (photoEditor != null) {
+            photoEditor.undo();
+            Toast.makeText(this, "Đã hoàn tác", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void Redo() {
-        photoEditor.redo();
+        if (photoEditor != null) {
+            photoEditor.redo();
+            Toast.makeText(this, "Đã làm lại", Toast.LENGTH_SHORT).show();
+        }
     }
 }
