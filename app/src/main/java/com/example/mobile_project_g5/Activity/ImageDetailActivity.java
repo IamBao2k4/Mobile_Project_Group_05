@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -54,6 +54,12 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.mobile_project_g5.APIClient;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.OnSwipeTouchListener;
+import com.example.mobile_project_g5.R;
+import com.example.mobile_project_g5.RemoveBgAPI;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 import com.example.mobile_project_g5.databinding.ImageSoloLayoutBinding;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;

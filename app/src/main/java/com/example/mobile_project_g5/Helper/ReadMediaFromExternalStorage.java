@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Helper;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -12,6 +12,9 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,7 +106,7 @@ public class ReadMediaFromExternalStorage{
         return mediaList;
     }
 
-    void loadImagesOnce() {
+    public void loadImagesOnce() {
         SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         boolean isLoaded = prefs.getBoolean("isLoaded", false);
         if (!isLoaded) {

@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Activity;
 
 
 import android.content.Context;
@@ -12,6 +12,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mobile_project_g5.Component.AlbumClass;
+import com.example.mobile_project_g5.Adapter.ImageAdapter;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
+import com.example.mobile_project_g5.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

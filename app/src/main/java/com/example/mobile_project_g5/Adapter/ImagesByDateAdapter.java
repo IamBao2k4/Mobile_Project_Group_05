@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -14,6 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.R;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 import java.util.List;
 

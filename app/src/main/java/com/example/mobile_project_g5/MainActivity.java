@@ -7,12 +7,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.Manifest;
 
 import androidx.activity.EdgeToEdge;
@@ -20,19 +16,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.mobile_project_g5.Activity.AlbumDetailActivity;
+import com.example.mobile_project_g5.Component.AlbumClass;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Fragment.HomeFragment;
+import com.example.mobile_project_g5.Fragment.PhotosFragment;
+import com.example.mobile_project_g5.Fragment.VideoFragment;
+import com.example.mobile_project_g5.Helper.IdentifyDuplicateImage;
+import com.example.mobile_project_g5.Helper.ReadMediaFromExternalStorage;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 import com.example.mobile_project_g5.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_MANAGE_STORAGE = 1000;

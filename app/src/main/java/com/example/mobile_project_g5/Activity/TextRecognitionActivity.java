@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Activity;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.example.mobile_project_g5.R;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.TextRecognition;
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions;

@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Helper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +8,10 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.util.Pair;
+
+import com.example.mobile_project_g5.Component.AlbumClass;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 import java.util.ArrayList;
 import java.util.Arrays;

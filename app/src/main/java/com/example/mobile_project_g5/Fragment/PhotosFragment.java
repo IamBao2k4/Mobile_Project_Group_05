@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Fragment;
 
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -11,9 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mobile_project_g5.ImageClass;
-import com.example.mobile_project_g5.ImagesByDateAdapter;
-import com.example.mobile_project_g5.SQLiteDataBase;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Adapter.ImagesByDateAdapter;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
+import com.example.mobile_project_g5.R;
 
 import java.util.Arrays;
 

@@ -1,4 +1,5 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Component;
+
 
 import java.util.List;
 

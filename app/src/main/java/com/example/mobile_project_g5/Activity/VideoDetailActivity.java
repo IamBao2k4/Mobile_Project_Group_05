@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +13,10 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.R;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 public class VideoDetailActivity extends AppCompatActivity {
 

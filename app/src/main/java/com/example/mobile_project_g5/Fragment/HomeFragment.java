@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Fragment;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -27,6 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.mobile_project_g5.Adapter.AlbumItemAdapter;
+import com.example.mobile_project_g5.Component.AlbumClass;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
+import com.example.mobile_project_g5.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 

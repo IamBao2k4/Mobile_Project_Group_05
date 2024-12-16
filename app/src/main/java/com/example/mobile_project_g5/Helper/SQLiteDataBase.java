@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Helper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +27,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import com.example.mobile_project_g5.Component.AlbumClass;
+import com.example.mobile_project_g5.Component.ImageClass;
 
 public class SQLiteDataBase extends SQLiteOpenHelper {
     private static final String DB_NAME = "albumAppDB.db";

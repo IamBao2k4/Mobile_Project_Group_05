@@ -1,5 +1,8 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Fragment;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +19,13 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DeleteFragment extends Fragment {
+import com.example.mobile_project_g5.Adapter.ImageAdapter;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
+import com.example.mobile_project_g5.Fragment.HomeFragment;
+import com.example.mobile_project_g5.R;
+
+public class FavoriteFragment extends Fragment {
     SQLiteDataBase sql;
     ImageAdapter adapter;
     ImageClass[] images;
@@ -28,15 +37,16 @@ public class DeleteFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        currentView = (ViewGroup) inflater.inflate(R.layout.deleteed_fragment, container, false);
+        currentView = (ViewGroup) inflater.inflate(R.layout.favorite_fragment, container, false);
         sql = new SQLiteDataBase(getContext());
-        images = sql.getDeletedImage();
-        adapter = new ImageAdapter(getContext(), images, "deleted");
-        gridLayout = currentView.findViewById(R.id.deleted_grid);
+        images = sql.getFavoriteImages();
+        adapter = new ImageAdapter(getContext(), images, "favorite");
+        gridLayout = currentView.findViewById(R.id.favorite_grid);
         gridLayout.setLayoutManager(new GridLayoutManager(getContext(), 2));
         gridLayout.setAdapter(adapter);
 
         ImageButton backBtn = currentView.findViewById(R.id.back_btn);
+
         backBtn.setOnClickListener(v -> {
             FragmentManager fragmentManager = getParentFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -51,9 +61,9 @@ public class DeleteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        images = sql.getDeletedImage();
+        images = sql.getFavoriteImages();
         adapter = new ImageAdapter(getContext(), images, "deleted");
-        gridLayout = currentView.findViewById(R.id.deleted_grid);
+        gridLayout = currentView.findViewById(R.id.favorite_grid);
         gridLayout.setAdapter(adapter);
     }
 }

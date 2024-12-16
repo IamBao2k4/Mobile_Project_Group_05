@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Helper;
 
 import android.content.Context;
 import android.view.GestureDetector;

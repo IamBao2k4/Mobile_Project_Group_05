@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Adapter;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -23,6 +23,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.mobile_project_g5.Activity.ImageDetailActivity;
+import com.example.mobile_project_g5.Activity.VideoDetailActivity;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.R;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 import java.io.IOException;
 import java.util.ArrayList;

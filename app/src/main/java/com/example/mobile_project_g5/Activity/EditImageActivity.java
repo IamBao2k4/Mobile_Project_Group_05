@@ -1,4 +1,4 @@
-package com.example.mobile_project_g5;
+package com.example.mobile_project_g5.Activity;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -31,6 +31,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.example.mobile_project_g5.Component.ImageClass;
+import com.example.mobile_project_g5.R;
+import com.example.mobile_project_g5.Helper.SQLiteDataBase;
 
 import java.io.File;
 import java.io.FileOutputStream;
