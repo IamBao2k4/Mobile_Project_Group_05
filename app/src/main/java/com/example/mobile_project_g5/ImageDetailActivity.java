@@ -386,6 +386,16 @@ public class ImageDetailActivity extends AppCompatActivity {
                     removeBackground();
                     return true;
                 }
+                if(item.getItemId() == R.id.text_recognition){
+                    if (imagePath != null && !imagePath.isEmpty()) {
+                        Intent intent = new Intent(ImageDetailActivity.this, TextRecognitionActivity.class);
+                        intent.putExtra("imagePath", imagePath);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(ImageDetailActivity.this, "Image path is invalid!", Toast.LENGTH_SHORT).show();
+                    }
+                    return true;
+                }
                 return false;
             }
         });

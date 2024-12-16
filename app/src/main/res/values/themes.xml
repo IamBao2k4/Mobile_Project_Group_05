@@ -2,7 +2,9 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Mobile_Project_G5" parent="Theme.Material3.Light.NoActionBar">
     <!--    Theme for light mode    -->
-
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryVariant">@color/green</item>
+        <item name="android:statusBarColor">@color/green</item>
     </style>
 
     <!-- Customize your light theme here. -->

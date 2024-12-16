@@ -53,5 +53,5 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
     implementation("com.burhanrashid52:photoeditor:3.0.2")
-
+    implementation ("com.google.mlkit:text-recognition:16.0.1")
 }
