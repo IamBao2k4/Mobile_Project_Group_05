@@ -51,9 +51,9 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         db.execSQL(createAlbumQuery);
 
         String createImageQuery = "CREATE TABLE IF NOT EXISTS Image (" +
-                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "ID INTEGER," +
                 "Album_Id INTEGER NOT NULL," +
-                "file_path TEXT NOT NULL," +
+                "file_path TEXT PRIMARY KEY NOT NULL," +
                 "Information TEXT," +
                 "is_favorite INTEGER," +
                 "exif_datetime TEXT," +
@@ -67,13 +67,13 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     }
 
     private void InsertMockData(SQLiteDatabase db) {
-        String insertAlbumQuery = "INSERT INTO Album (Name, Information) VALUES " +
+        String insertAlbumQuery = "INSERT OR IGNORE INTO Album (Name, Information) VALUES " +
                 "('Album 1', 'Album 1')," +
                 "('Album 2', 'Album 2')," +
                 "('Album 3', 'Album 3')";
         db.execSQL(insertAlbumQuery);
 
-        String insertImageQuery = "INSERT INTO Image (Album_Id, file_path, Information, is_favorite, exif_datetime, activate, is_selected, deleted_at, type) VALUES " +
+        String insertImageQuery = "INSERT OR IGNORE INTO Image (Album_Id, file_path, Information, is_favorite, exif_datetime, activate, is_selected, deleted_at, type) VALUES " +
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/banana', 'Information1', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/cherry', 'Information2', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
                 "(2, 'android.resource://com.example.mobile_project_g5/drawable/elderberry', 'Information3', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
@@ -237,12 +237,19 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         for (ImageClass image : images) {
             try{
-                ContentValues values = getContentValues(image);
-                long rowId = db.insert("Image", null, values);
-                if (rowId == -1) {
-                    Toast.makeText(context, "Lỗi khi thêm ảnh.", Toast.LENGTH_SHORT).show();
-                    break;
-                }
+                String insertQuery = "INSERT OR IGNORE INTO Image (Album_Id, file_path, Information, is_favorite, exif_datetime, activate, is_selected, deleted_at, type) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                db.execSQL(insertQuery, new Object[]{
+                        image.getAlbumID(),
+                        image.getFilePath(),
+                        image.getInformation(),
+                        0, // is_favorite
+                        image.getExifDatetime(),
+                        "1", // activate
+                        0, // is_selected
+                        null, // deleted_at
+                        image.getType()
+                });
             }
             catch (Exception e){
                 Log.e("DatabaseError", "Exception: ", e);
