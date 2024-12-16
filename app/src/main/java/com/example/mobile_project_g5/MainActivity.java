@@ -219,10 +219,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
-        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        prefs.edit().putBoolean("isLoaded", false).apply();
-        readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
-        readMediaFromExternalStorage.loadImagesOnce();
+//        sql.onUpgrade(sql.getWritableDatabase(), 1, 1);
+//        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", MODE_PRIVATE);
+//        prefs.edit().putBoolean("isLoaded", false).apply();
+//        readMediaFromExternalStorage = new ReadMediaFromExternalStorage(context);
+//        readMediaFromExternalStorage.loadImagesOnce();
     }
 }
