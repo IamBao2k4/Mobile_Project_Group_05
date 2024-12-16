@@ -2,13 +2,11 @@ package com.example.mobile_project_g5;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,21 +17,19 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.mobile_project_g5.AlbumClass;
+import com.example.mobile_project_g5.AlbumDetailActivity;
+import com.example.mobile_project_g5.SQLiteDataBase;
 
 public class AlbumItemAdapter extends RecyclerView.Adapter<AlbumItemAdapter.ViewHolder> {
 
     private final Context context;
     private AlbumClass[] items;
-    private boolean isEdit = false;
+    public boolean isEdit;
 
     public AlbumItemAdapter(Context context, AlbumClass[] items) {
         this.context = context;
         this.items = items;
-    }
-
-    public void setEditMode(boolean isEdit) {
-        this.isEdit = isEdit;
-        notifyDataSetChanged();
     }
 
     @NonNull
@@ -55,13 +51,14 @@ public class AlbumItemAdapter extends RecyclerView.Adapter<AlbumItemAdapter.View
         } else {
             holder.imgBtn.setImageResource(R.drawable.ic_baseline_folder_24);
         }
-        holder.textView.setText(album.getAlbumName());
 
         if (isEdit) {
             holder.deleteBtn.setVisibility(View.VISIBLE);
         } else {
             holder.deleteBtn.setVisibility(View.GONE);
         }
+
+        holder.textView.setText(album.getAlbumName());
 
         holder.deleteBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -91,6 +88,12 @@ public class AlbumItemAdapter extends RecyclerView.Adapter<AlbumItemAdapter.View
             Intent intent = AlbumDetailActivity.newIntent(context, album, null);
             context.startActivity(intent);
         });
+
+        holder.imgBtn.setOnLongClickListener(v -> {
+            setEditMode();
+            holder.deleteBtn.setVisibility(View.VISIBLE);
+            return true;
+        });
     }
 
     @Override
@@ -98,10 +101,15 @@ public class AlbumItemAdapter extends RecyclerView.Adapter<AlbumItemAdapter.View
         return items.length;
     }
 
+    public void setEditMode() {
+        this.isEdit = !this.isEdit;
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageButton imgBtn;
         TextView textView;
-        ImageView deleteBtn;
+        ImageButton deleteBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

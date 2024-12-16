@@ -16,7 +16,7 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ImageView
+            <ImageButton
                 android:id="@+id/img_hide"
                 android:visibility="gone"
                 android:translationZ="@android:dimen/app_icon_size"
@@ -25,6 +25,7 @@
                 android:scaleType="centerCrop"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:background="#00000000"
                 android:src="@drawable/ic_baseline_hide_24dp"
                 app:tint="@color/red" />
 

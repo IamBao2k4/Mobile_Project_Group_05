@@ -68,9 +68,9 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
 
     private void InsertMockData(SQLiteDatabase db) {
         String insertAlbumQuery = "INSERT INTO Album (Name, Information) VALUES " +
-                "('Album 1', 'ALbum 1')," +
-                "('ALbum 2', 'ALbum 2')," +
-                "('Album 3', 'ALbum 3')";
+                "('Album 1', 'Album 1')," +
+                "('Album 2', 'Album 2')," +
+                "('Album 3', 'Album 3')";
         db.execSQL(insertAlbumQuery);
 
         String insertImageQuery = "INSERT INTO Image (Album_Id, file_path, Information, is_favorite, exif_datetime, activate, is_selected, deleted_at, type) VALUES " +

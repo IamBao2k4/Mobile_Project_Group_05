@@ -53,13 +53,11 @@ public class HomeFragment extends Fragment {
         ImageButton addBtn = currentView.findViewById(R.id.add_btn);
 
         editBtn.setOnClickListener(v -> {
-            isEdit = !isEdit;
-            if (isEdit) {
-                adapter.setEditMode(isEdit);
+            adapter.setEditMode();
+            if (adapter.isEdit) {
                 editBtn.setText("Done");
                 addBtn.setVisibility(View.VISIBLE);
             } else {
-                adapter.setEditMode(isEdit);
                 editBtn.setText("Edit");
                 addBtn.setVisibility(View.GONE);
             }
