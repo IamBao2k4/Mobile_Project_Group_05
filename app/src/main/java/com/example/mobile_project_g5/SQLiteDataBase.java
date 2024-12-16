@@ -35,13 +35,10 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
     public SQLiteDataBase(Context context) {
         super(context, DB_NAME, null, 1);
         this.context = context;
-        File dbFile = context.getDatabasePath(DB_NAME);
-
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //File dbFile = context.getDatabasePath(DB_NAME);
         CreateTables(db);
     }
 
@@ -89,6 +86,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/nectarine', 'Information10', 0, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(2, 'android.resource://com.example.mobile_project_g5/drawable/apple', 'Information11', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(3, 'android.resource://com.example.mobile_project_g5/drawable/tangerine', 'Information12', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
+                "(3, 'android.resource://com.example.mobile_project_g5/drawable/text_test', 'Text test', 1, '2024-11-28 00:00:00', 1, 0, NULL, 'image')," +
                 "(3, 'android.resource://com.example.mobile_project_g5/drawable/orange', 'Information13', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/pear', 'Information14', 0, '2024-12-15 00:00:00', 1, 0, NULL, 'image')," +
                 "(1, 'android.resource://com.example.mobile_project_g5/drawable/raspberry', 'Information15', 1, '2024-10-30 00:00:00', 1, 0, NULL, 'image')," +

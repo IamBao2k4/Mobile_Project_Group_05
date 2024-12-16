@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
     private ImageView cameraImage;
     private Button copyTextBtn;
     private TextView resultText;
+    private ImageButton backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class TextRecognitionActivity extends AppCompatActivity {
         cameraImage = findViewById(R.id.cameraImage);
         copyTextBtn = findViewById(R.id.copyTextBtn);
         resultText = findViewById(R.id.resultText);
+        backBtn = findViewById(R.id.backBtn);
 
         // Nhận đường dẫn hình ảnh từ Intent
         String imagePath = getIntent().getStringExtra("imagePath");
@@ -66,6 +69,8 @@ public class TextRecognitionActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No image provided!", Toast.LENGTH_SHORT).show();
         }
+
+        backBtn.setOnClickListener(v -> finish());
     }
 
     private void recognizeText(Bitmap bitmap) {

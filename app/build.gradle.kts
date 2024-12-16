@@ -41,6 +41,7 @@ dependencies {
     implementation (libs.viewpager2)
     implementation (libs.sqlite)
     implementation (libs.glide)
+    implementation(libs.vision.common)
     annotationProcessor (libs.compiler)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -52,6 +53,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
-    implementation("com.burhanrashid52:photoeditor:3.0.2")
-    implementation ("com.google.mlkit:text-recognition:16.0.1")
+    implementation(libs.photoeditor)
+    implementation (libs.text.recognition)
 }
