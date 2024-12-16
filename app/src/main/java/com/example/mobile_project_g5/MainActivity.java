@@ -134,7 +134,10 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new PhotosFragment();
             } else if (R.id.nav_albums == itemId) {
                 selectedFragment = new HomeFragment();
-            } else if (R.id.nav_settings == itemId) {
+            } else if (R.id.nav_video == itemId) {
+                selectedFragment = new VideoFragment();
+            }
+            else if (R.id.nav_settings == itemId) {
                 showPopupMenu(findViewById(R.id.nav_settings));
                 return false; // Don't load fragment
             }

@@ -110,7 +110,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         ImageButton shareButton = findViewById(R.id.share_button);
         ImageButton editButton = findViewById(R.id.edit_button);
         imageView = findViewById(R.id.imgSoloPhoto);
-
         ImageButton backButton = findViewById(R.id.back_btn);
 
         GlideImage(imagePath);
@@ -133,10 +132,8 @@ public class ImageDetailActivity extends AppCompatActivity {
 
         // Set visibility for delete and restore button based on type
         if(type.equals("deleted")){
-            deleteButton.setVisibility(View.GONE);
             restoreButton.setVisibility(View.VISIBLE);
         } else {
-            deleteButton.setVisibility(View.VISIBLE);
             restoreButton.setVisibility(View.GONE);
         }
 
@@ -144,7 +141,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         if(image.getActivate().equals("0"))
         {
             editButton.setVisibility(View.GONE);
-            deleteButton.setVisibility(View.GONE);
             restoreButton.setVisibility(View.VISIBLE);
             favoriteButton.setVisibility(View.GONE);
             shareButton.setVisibility(View.GONE);
@@ -152,7 +148,6 @@ public class ImageDetailActivity extends AppCompatActivity {
         else
         {
             editButton.setVisibility(View.VISIBLE);
-            deleteButton.setVisibility(View.VISIBLE);
             restoreButton.setVisibility(View.GONE);
             favoriteButton.setVisibility(View.VISIBLE);
             shareButton.setVisibility(View.VISIBLE);
@@ -345,9 +340,16 @@ public class ImageDetailActivity extends AppCompatActivity {
 
     private void deleteImage() {
         String imagePath = getIntent().getStringExtra("image_path");
+        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        ImageClass image =  dbHelper.getImageByPath(imagePath);
 
         // Xóa ảnh khỏi cơ sở dữ liệu
-        SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+        if(image.getActivate().equals("1")){
+            dbHelper.deleteImage(imagePath);
+        }
+        else{
+            dbHelper.removeImage(imagePath);
+        }
         dbHelper.deleteImage(imagePath);
 
         Intent resultIntent = new Intent();

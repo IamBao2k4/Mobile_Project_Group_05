@@ -487,5 +487,41 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         }
         return null;
     }
+
+    public ImageClass[] getAllVideos() {
+        List<ImageClass> res = new ArrayList<>();
+        SQLiteDatabase db = this.openDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM Image WHERE type = 'video' AND activate = 1", null);
+        if (cursor.moveToFirst()) {
+            do {
+                ImageClass image = new ImageClass(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6),
+                        cursor.getInt(7),
+                        cursor.getString(8),
+                        cursor.getString(9));
+                res.add(image);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return res.toArray(new ImageClass[0]);
+    }
+
+    public void removeImage(String imagePath) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsDeleted = db.delete("Image", "file_path = ?", new String[]{imagePath});
+        if (rowsDeleted == 0) {
+            Toast.makeText(context, "Lỗi khi xóa ảnh", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Xóa ảnh thành công", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+    }
 }
 
