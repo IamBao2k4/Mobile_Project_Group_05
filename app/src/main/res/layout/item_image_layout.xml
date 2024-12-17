@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,10 +5,11 @@
     android:orientation="horizontal"
     android:gravity="center"
     android:layout_margin="10dp">
+
+        <!-- Icon chọn -->
         <ImageView
             android:id="@+id/select"
             android:visibility="gone"
-            android:translationZ="@android:dimen/app_icon_size"
             android:layout_marginTop="10dp"
             android:layout_marginStart="5dp"
             android:scaleType="centerCrop"
@@ -17,15 +17,44 @@
             android:layout_width="wrap_content"
             android:src="@drawable/ic_baseline_hide_24dp"
             app:tint="@color/red"
-            android:layout_weight="0"
-            />
+            android:layout_weight="0" />
 
-        <ImageView
-            android:id="@+id/image_view"
-            android:layout_width="wrap_content"
+        <!-- Hình ảnh/Thumbnail -->
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="133dp"
             android:layout_weight="1"
             android:padding="1.5dp"
-            android:background="@drawable/image_border"
-            />
+            android:background="@drawable/image_border">
+
+                <!-- Hình ảnh/Thumbnail -->
+                <ImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <!-- Biểu tượng video -->
+                <ImageView
+                    android:id="@+id/video_icon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    />
+
+                <!-- Thời lượng video -->
+                <TextView
+                    android:id="@+id/video_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="4dp"
+                    android:background="@drawable/duration_background"
+                    android:padding="4dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+        </FrameLayout>
+
 </LinearLayout>

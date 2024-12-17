@@ -1,5 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
+
+    //id("org.jetbrains.kotlin.android") version "1.8.20"
+alias(libs.plugins.android.application)
 }
 
 android {
@@ -36,8 +38,10 @@ android {
 }
 
 dependencies {
+    implementation (libs.viewpager2)
     implementation (libs.sqlite)
     implementation (libs.glide)
+    implementation(libs.vision.common)
     annotationProcessor (libs.compiler)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -46,4 +50,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.photoeditor)
+    implementation (libs.text.recognition)
 }

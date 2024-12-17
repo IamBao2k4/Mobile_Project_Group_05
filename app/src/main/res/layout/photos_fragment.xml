@@ -20,16 +20,13 @@
         android:layout_marginBottom="8dp"/>
 
     <!-- GridView để hiển thị ảnh -->
-    <GridView
-        android:id="@+id/grid_layout"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/text_view"
         android:layout_alignParentBottom="true"
-        android:numColumns="2"
         android:layout_margin="8dp"
-        android:columnWidth="100dp"
-        android:stretchMode="columnWidth"
         android:horizontalSpacing="8dp"
         android:verticalSpacing="8dp"
         android:layout_marginTop="8dp"

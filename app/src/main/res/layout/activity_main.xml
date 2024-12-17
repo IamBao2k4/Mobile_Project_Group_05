@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border_block"
-
         >
 
         <ImageView
@@ -37,15 +36,24 @@
 
     </Toolbar>
 
-    <FrameLayout
-        android:id="@+id/default_fragment"
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/nav_button"
         android:layout_below="@+id/tool_bar"
-        >
+        android:layout_marginTop="-2dp"
+        android:layout_marginBottom="2dp">
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/default_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
+
+        </FrameLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_button"
