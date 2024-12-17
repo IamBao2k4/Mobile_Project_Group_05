@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingBottom="8dp"
-        android:text="Album mới"
+        android:text="New Album"
         android:layout_marginTop="16dp"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -25,14 +25,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingBottom="16dp"
-        android:text="Nhập tên cho album này."
+        android:text="Enter Album's name."
         android:textSize="18sp" />
 
     <EditText
         android:id="@+id/albumNameInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Tên album"
+        android:hint="Album name."
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:padding="10dp"
@@ -54,7 +54,7 @@
             android:textSize="20sp"
             android:backgroundTint="@color/white"
             android:background="@drawable/button_drawable"
-            android:text="Hủy" />
+            android:text="Cancel" />
 
         <Button
             android:id="@+id/saveButton"
@@ -65,7 +65,7 @@
             android:textSize="20sp"
             android:backgroundTint="@color/white"
             android:background="@drawable/button_drawable"
-            android:text="Lưu" />
+            android:text="Save" />
     </LinearLayout>
 
 </LinearLayout>
