@@ -340,7 +340,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         for (ImageClass image : images) {
             ContentValues values = new ContentValues();
             values.put("Album_Id", albumId);
-            int rowsAffected = db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
+            int rowsAffected = db.update("Image", values, "file_path = ?", new String[]{String.valueOf(image.getFilePath())});
             if (rowsAffected == 0) {
                 //db.close();
                 return false;
