@@ -449,7 +449,7 @@ public class SQLiteDataBase extends SQLiteOpenHelper {
         values.put("is_selected", image.getIsSelected());
         values.put("deleted_at", image.getDeleteAt());
         values.put("type", image.getType());
-        db.update("Image", values, "ID = ?", new String[]{String.valueOf(image.getImageID())});
+        db.update("Image", values, "file_path = ?", new String[]{String.valueOf(image.getFilePath())});
         db.close();
     }
 
