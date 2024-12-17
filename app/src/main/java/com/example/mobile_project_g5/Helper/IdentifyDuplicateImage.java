@@ -70,7 +70,7 @@ public class IdentifyDuplicateImage {
     }
     public boolean isDuplicate(String hash1, String hash2) {
         int count = 0;
-        for (int i = 0; i < hash1.length(); i++) {
+        for (int i = 0; i < (Math.min(hash1.length(), hash2.length())); i++) {
             if (hash1.charAt(i) != hash2.charAt(i)) {
                 count++;
             }
@@ -127,7 +127,7 @@ public class IdentifyDuplicateImage {
 
             boolean isGrouped = false;
             for (String groupHash : hashToGroupMap.keySet()) {
-                if (hash!= null && isDuplicate(hash, groupHash)) {
+                if (hash!= null && groupHash != null && isDuplicate(hash, groupHash)) {
                     Objects.requireNonNull(hashToGroupMap.get(groupHash)).add(image);
                     isGrouped = true;
                     break;
