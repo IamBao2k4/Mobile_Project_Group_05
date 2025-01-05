@@ -125,7 +125,8 @@ public class EditImageActivity extends AppCompatActivity {
             String text = input.getText().toString();
             if (!text.isEmpty()) {
                 photoEditor.addText(text, Color.RED);
-                Toast.makeText(this, "Đã thêm văn bản!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đã " +
+                        "thêm văn bản!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Vui lòng nhập văn bản!", Toast.LENGTH_SHORT).show();
             }
