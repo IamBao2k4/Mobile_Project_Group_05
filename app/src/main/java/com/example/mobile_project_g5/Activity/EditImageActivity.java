@@ -102,6 +102,7 @@ public class EditImageActivity extends AppCompatActivity {
         btnSave.setOnClickListener(v -> saveImage());
     }
 
+    //load image into Frame to edit them
     private void loadImage(Uri uri) {
         // Sử dụng ViewTreeObserver để đảm bảo view đã đo lường xong trước khi tải ảnh
         ViewTreeObserver viewTreeObserver = photoEditorView.getViewTreeObserver();
