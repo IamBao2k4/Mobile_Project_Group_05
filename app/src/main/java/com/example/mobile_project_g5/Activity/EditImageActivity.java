@@ -254,6 +254,23 @@ public class EditImageActivity extends AppCompatActivity {
         return bitmap;
     }
 
+    //hoan tac lai thao tac truoc do
+    private void Undo() {
+        if (photoEditor != null) {
+            photoEditor.undo();
+            Toast.makeText(this, "Đã hoàn tác", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //lam lai thao tac da lam
+    private void Redo() {
+        if (photoEditor != null) {
+            photoEditor.redo();
+            Toast.makeText(this, "Đã làm lại", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //save image vao local
     private void saveImage() {
         Bitmap bitmap = getBitmapFromPhotoEditorView();
 
@@ -306,17 +323,4 @@ public class EditImageActivity extends AppCompatActivity {
         }
     }
 
-    private void Undo() {
-        if (photoEditor != null) {
-            photoEditor.undo();
-            Toast.makeText(this, "Đã hoàn tác", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void Redo() {
-        if (photoEditor != null) {
-            photoEditor.redo();
-            Toast.makeText(this, "Đã làm lại", Toast.LENGTH_SHORT).show();
-        }
-    }
 }
