@@ -48,6 +48,12 @@ public class EditImageActivity extends AppCompatActivity {
     private PhotoEditorView photoEditorView;
     ImageClass image;
 
+    // Lưu trạng thái gốc của ảnh
+    private Bitmap originalBitmap;
+
+    // Lưu trạng thái hiện tại sau khi áp dụng filter
+    private Bitmap currentBitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +120,13 @@ public class EditImageActivity extends AppCompatActivity {
         });
     }
 
+    private void enableDrawing() {
+        photoEditor.setBrushDrawingMode(true);
+        photoEditor.setBrushColor(Color.BLUE);
+        photoEditor.setBrushSize(10);
+        Toast.makeText(this, "Đã bật chế độ vẽ", Toast.LENGTH_SHORT).show();
+    }
+
     private void addTextToImage() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Nhập văn bản");
@@ -125,8 +138,7 @@ public class EditImageActivity extends AppCompatActivity {
             String text = input.getText().toString();
             if (!text.isEmpty()) {
                 photoEditor.addText(text, Color.RED);
-                Toast.makeText(this, "Đã " +
-                        "thêm văn bản!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Đã thêm văn bản!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Vui lòng nhập văn bản!", Toast.LENGTH_SHORT).show();
             }
@@ -134,13 +146,6 @@ public class EditImageActivity extends AppCompatActivity {
 
         builder.setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss());
         builder.show();
-    }
-
-    private void enableDrawing() {
-        photoEditor.setBrushDrawingMode(true);
-        photoEditor.setBrushColor(Color.BLUE);
-        photoEditor.setBrushSize(10);
-        Toast.makeText(this, "Đã bật chế độ vẽ", Toast.LENGTH_SHORT).show();
     }
 
     private void showFilterDialog() {
@@ -173,9 +178,9 @@ public class EditImageActivity extends AppCompatActivity {
     private void applySepiaFilter() {
         ColorMatrix matrix = new ColorMatrix();
         matrix.set(new float[]{
-                0.393f, 0.769f, 0.189f, 0f, 0f,
-                0.349f, 0.686f, 0.168f, 0f, 0f,
-                0.272f, 0.534f, 0.131f, 0f, 0f,
+                0.393f, 0.769f, 0.189f, 0f, 30f,
+                0.349f, 0.686f, 0.168f, 0f, 20f,
+                0.272f, 0.534f, 0.131f, 0f, 10f,
                 0f, 0f, 0f, 1f, 0f
         });
         photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
@@ -184,7 +189,21 @@ public class EditImageActivity extends AppCompatActivity {
     private void applyGrayscaleFilter() {
         ColorMatrix matrix = new ColorMatrix();
         matrix.setSaturation(0);
+        matrix.postConcat(createContrastMatrix(1.2f)); // Tăng độ tương phản
         photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
+    }
+
+    private ColorMatrix createContrastMatrix(float contrast) {
+        ColorMatrix contrastMatrix = new ColorMatrix();
+        float scale = contrast;
+        float translate = (-0.5f * scale + 0.5f) * 255;
+        contrastMatrix.set(new float[]{
+                scale, 0, 0, 0, translate,
+                0, scale, 0, 0, translate,
+                0, 0, scale, 0, translate,
+                0, 0, 0, 1, 0
+        });
+        return contrastMatrix;
     }
 
     private void applyBrightnessFilter(int brightness) {
@@ -195,7 +214,14 @@ public class EditImageActivity extends AppCompatActivity {
                 0, 0, 1, 0, brightness,
                 0, 0, 0, 1, 0
         });
+        matrix.postConcat(createSaturationMatrix(1.1f)); // Tăng bão hòa nhẹ
         photoEditorView.getSource().setColorFilter(new ColorMatrixColorFilter(matrix));
+    }
+
+    private ColorMatrix createSaturationMatrix(float saturationFactor) {
+        ColorMatrix saturationMatrix = new ColorMatrix();
+        saturationMatrix.setSaturation(saturationFactor);
+        return saturationMatrix;
     }
 
     private void applyContrastFilter(float contrast) {
