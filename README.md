@@ -2,7 +2,7 @@
 
 ## Giới thiệu
 
-Đây là dự án Android của nhóm 5, được phát triển như một phần của khóa học phát triển ứng dụng di động. Dự án này nhằm mục đích xây dựng một ứng dụng Android với các tính năng quản lý thông tin và tương tác người dùng qua giao diện đơn giản và hiệu quả.
+Đây là dự án Android của nhóm 5, mục tiêu xây dựng ứng dụng quản lý ảnh với các chức năng như thêm ảnh, hiển thị chi tiết ảnh, nhận diện văn bản từ ảnh, và quản lý video. Ứng dụng được chia thành các thành phần như Activity, Adapter, Fragment, API và các helper để hỗ trợ các tính năng trong ứng dụng.
 
 ## Tính năng chính
    
@@ -15,6 +15,80 @@
 
 3. **Lưu trữ và quản lý dữ liệu**:
    - Ứng dụng lưu trữ thông tin người dùng và ảnh trong cơ sở dữ liệu SQLite.
+
+
+## Cấu trúc thư mục
+
+- **Activity**: Các màn hình chính của ứng dụng.
+  - `AddImageActivity`: Màn hình để thêm ảnh mới.
+  - `AlbumDetailActivity`: Hiển thị chi tiết album và ảnh trong album đó.
+  - `EditImageActivity`: Màn hình chỉnh sửa ảnh.
+  - `ImageDetailActivity`: Xem chi tiết ảnh.
+  - `TextRecognitionActivity`: Nhận diện văn bản từ ảnh.
+  - `VideoDetailActivity`: Xem chi tiết video.
+
+- **Adapter**: Các adapter để quản lý và hiển thị danh sách trong các view.
+  - `AlbumAdapter`: Quản lý danh sách album.
+  - `ImageAdapter`: Quản lý danh sách ảnh trong album.
+  - `ImagesByDateAdapter`: Quản lý danh sách ảnh theo ngày.
+
+- **API**: Các API giúp kết nối với các dịch vụ bên ngoài.
+  - `APIClient`: Kết nối và gọi các API.
+  - `RemoveBgAPI`: Kết nối với API để xóa nền ảnh.
+
+- **Component**: Các lớp đại diện cho các thành phần trong ứng dụng.
+  - `AlbumClass`: Lớp mô tả album.
+  - `ImageClass`: Lớp mô tả ảnh.
+
+- **Fragment**: Các phần giao diện trong ứng dụng.
+  - `DeleteFragment`: Màn hình xóa ảnh.
+  - `FavoriteFragment`: Hiển thị ảnh yêu thích.
+  - `HomeFragment`: Màn hình chính của ứng dụng.
+  - `PhotosFragment`: Màn hình hiển thị danh sách ảnh.
+  - `VideoFragment`: Màn hình hiển thị video.
+
+- **Helper**: Các lớp hỗ trợ chức năng trong ứng dụng.
+  - `IdentifyDuplicateImage`: Kiểm tra ảnh trùng lặp.
+  - `OnSwipeTouchListener`: Lắng nghe sự kiện vuốt.
+  - `ReadMediaFromExternalStorage`: Đọc dữ liệu media từ bộ nhớ ngoài.
+  - `SQLiteDataBase`: Quản lý cơ sở dữ liệu SQLite.
+
+- **MainActivity**: Màn hình chính của ứng dụng khi khởi động.
+
+## Các tính năng
+
+- Thêm và quản lý ảnh trong album.
+- Xem chi tiết ảnh và video.
+- Nhận diện văn bản từ ảnh.
+- Xóa ảnh khỏi album hoặc danh sách yêu thích.
+- Hiển thị ảnh theo ngày.
+- Đặt hình làm hình nền điện thoại.
+- Dark Mode / Light Mode
+- Xóa background ảnh
+- Chỉnh sửa ảnh
+- 
+
+
+## Các dependencies
+
+Dự án sử dụng các thư viện sau để hỗ trợ các tính năng của ứng dụng:
+
+- **ViewPager2**: Dùng để tạo hiệu ứng lướt giữa các trang hoặc hình ảnh.
+- **SQLite**: Quản lý cơ sở dữ liệu SQLite cho ứng dụng.
+- **Glide**: Thư viện tải và hiển thị ảnh.
+- **Vision Common**: Các thành phần chung của thư viện Vision cho nhận diện văn bản từ ảnh.
+- **Annotation Processor**: Xử lý chú thích trong ứng dụng.
+- **AppCompat**: Hỗ trợ giao diện người dùng với các tính năng tương thích ngược.
+- **Material Components**: Giao diện người dùng theo thiết kế Material Design.
+- **Activity**: Cung cấp các tiện ích cho hoạt động trong ứng dụng.
+- **ConstraintLayout**: Layout giúp tạo giao diện linh hoạt và dễ dàng.
+- **JUnit**: Thư viện kiểm thử đơn vị.
+- **Espresso**: Thư viện kiểm thử UI.
+- **Retrofit**: Thư viện HTTP để thực hiện các yêu cầu mạng.
+- **Gson Converter**: Hỗ trợ chuyển đổi giữa JSON và đối tượng Java.
+- **OkHttp**: Thư viện HTTP client để gửi các yêu cầu mạng.
+- **PhotoEditor**: Thư viện chỉnh sửa ảnh.
+- **Text Recognition**: Thư viện nhận diện văn bản từ ảnh.
 
 ## Cài đặt
 
