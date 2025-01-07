@@ -543,8 +543,8 @@ public class ImageDetailActivity extends AppCompatActivity {
 
             String albumID = getIntent().getStringExtra("album_id");
 
-            SQLiteDataBase dbHelper = new SQLiteDataBase(this);
-            dbHelper.addImage(albumID, imagePath, "remove bg");
+//            SQLiteDataBase dbHelper = new SQLiteDataBase(this);
+//            dbHelper.addImage(albumID, imagePath, "remove bg");
 
             Toast.makeText(ImageDetailActivity.this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
         }
